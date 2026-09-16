@@ -114,6 +114,9 @@ h1{font-family:"Noto Serif TC",serif;font-weight:700;font-size:30px;line-height:
 .sum .l span:first-child{color:var(--muted)}
 .sum .l b{font-weight:700}
 .sum .l.hi b{color:var(--rose)}
+.tierbar{margin:10px 16px 0;padding:13px 15px;border-radius:13px;background:var(--rose-soft);
+  border:1px solid var(--line);font-size:13.5px;line-height:1.75;color:var(--ink);font-weight:500}
+.tierbar b{color:var(--rose);font-weight:800}
 .ship{display:flex;flex-wrap:wrap;gap:7px;margin:10px 16px 0}
 .ship button{font-family:inherit;font-size:14.5px;font-weight:600;color:var(--plum);background:var(--card);
   border:1.5px solid var(--line);border-radius:12px;padding:11px 15px;cursor:pointer;font-variant-numeric:tabular-nums}
@@ -218,7 +221,7 @@ button:focus-visible,summary:focus-visible,input:focus-visible{outline:2.5px sol
   <div id="combos"></div>
 
   <div class="sect">加購商品 <span>· 直接用 VIP 價</span></div>
-  <p class="note">中秋組合以零售價計已超過 $4,000，加購同時或不同主商品都享 VIP 價。體驗包不打折，也不計入門檻。</p>
+  <div class="tierbar" id="cTier"></div>
   <div id="addons"></div>
 
   <div class="sect">運費</div>
@@ -381,40 +384,40 @@ const LEVELS = [
 ];
 const GROUPS = [
   { cat:"體重管理系列", list:[
-    {n:"纖纖飲X",u:"14入/盒",r:1480,v:1280,c:[1160,990,955,880]},
-    {n:"纖飄錠",u:"60錠/盒",r:1480,v:1280,c:[1160,990,955,880]},
-    {n:"雪花紫纖飲",u:"14包/盒",r:990,v:830,c:[780,660,635,580]},
-    {n:"爆纖錠",u:"120錠/罐",r:880,v:740,c:[660,580,560,520]},
-    {n:"植萃纖酵宿",u:"60錠/盒",r:990,v:830,c:[780,660,635,580]},
-    {n:"肽纖飲 可可／奶茶風味",u:"10入/盒",r:990,v:830,c:[780,660,635,580]},
-    {n:"爆纖錠 體驗包",u:"30錠/包",r:240,v:240,t:1,c:[190,164,158,146]},
-    {n:"植萃纖酵宿 體驗包",u:"10錠/包",r:190,v:190,t:1,c:[145,117,113,103]}
+    {n:"纖纖飲X",u:"14入/盒",r:1480,d:1380,v:1280,c:[1160,990,955,880]},
+    {n:"纖飄錠",u:"60錠/盒",r:1480,d:1380,v:1280,c:[1160,990,955,880]},
+    {n:"雪花紫纖飲",u:"14包/盒",r:990,d:900,v:830,c:[780,660,635,580]},
+    {n:"爆纖錠",u:"120錠/罐",r:880,d:800,v:740,c:[660,580,560,520]},
+    {n:"植萃纖酵宿",u:"60錠/盒",r:990,d:900,v:830,c:[780,660,635,580]},
+    {n:"肽纖飲 可可／奶茶風味",u:"10入/盒",r:990,d:900,v:830,c:[780,660,635,580]},
+    {n:"爆纖錠 體驗包",u:"30錠/包",r:240,d:240,v:240,t:1,c:[190,164,158,146]},
+    {n:"植萃纖酵宿 體驗包",u:"10錠/包",r:190,d:190,v:190,t:1,c:[145,117,113,103]}
   ]},
   { cat:"機能保健系列", list:[
-    {n:"複方金盞花葉黃素EX飲",u:"12入/盒",r:1080,v:900,c:[840,720,695,640]},
-    {n:"金盞花葉黃素高鈣晶亮凍",u:"10入/盒",r:680,v:600,c:[530,455,440,410]},
-    {n:"高機能益生菌",u:"30包/盒",r:1280,v:1100,c:[990,860,830,770]},
-    {n:"9國英雄TURBO極速錠",u:"20錠/包",r:680,v:600,c:[530,455,440,410]},
-    {n:"療肺草正冠茶",u:"20包/盒",r:990,v:830,c:[780,660,635,580]},
-    {n:"固樂纖",u:"60錠/盒",r:1680,v:1480,c:[1260,1080,1040,920]}
+    {n:"複方金盞花葉黃素EX飲",u:"12入/盒",r:1080,d:990,v:900,c:[840,720,695,640]},
+    {n:"金盞花葉黃素高鈣晶亮凍",u:"10入/盒",r:680,d:630,v:600,c:[530,455,440,410]},
+    {n:"高機能益生菌",u:"30包/盒",r:1280,d:1180,v:1100,c:[990,860,830,770]},
+    {n:"9國英雄TURBO極速錠",u:"20錠/包",r:680,d:630,v:600,c:[530,455,440,410]},
+    {n:"療肺草正冠茶",u:"20包/盒",r:990,d:900,v:830,c:[780,660,635,580]},
+    {n:"固樂纖",u:"60錠/盒",r:1680,d:1580,v:1480,c:[1260,1080,1040,920]}
   ]},
   { cat:"美肌保養", list:[
-    {n:"水光錠",u:"60顆/盒",r:1680,v:1480,c:[1260,1080,1040,920]},
-    {n:"水光繃帶面膜 精裝盒",u:"5片/盒",r:700,v:600,c:[550,500,485,450]},
-    {n:"雪聚露",u:"120ml/瓶",r:1280,v:1100,c:[990,860,830,770]},
-    {n:"婕肌零洗卸凝膠",u:"200ml/瓶",r:990,v:830,c:[780,660,635,580]},
-    {n:"精純玻尿酸保濕原液",u:"30ml/瓶",r:990,v:830,c:[780,660,635,580]},
-    {n:"婕肌零 體驗包",u:"7ml/包",r:40,v:40,t:1,c:[30,25,24,20]}
+    {n:"水光錠",u:"60顆/盒",r:1680,d:1580,v:1480,c:[1260,1080,1040,920]},
+    {n:"水光繃帶面膜 精裝盒",u:"5片/盒",r:700,d:650,v:600,c:[550,500,485,450]},
+    {n:"雪聚露",u:"120ml/瓶",r:1280,d:1180,v:1100,c:[990,860,830,770]},
+    {n:"婕肌零洗卸凝膠",u:"200ml/瓶",r:990,d:900,v:830,c:[780,660,635,580]},
+    {n:"精純玻尿酸保濕原液",u:"30ml/瓶",r:990,d:900,v:830,c:[780,660,635,580]},
+    {n:"婕肌零 體驗包",u:"7ml/包",r:40,d:40,v:40,t:1,c:[30,25,24,20]}
   ]},
   { cat:"美體美髮", list:[
-    {n:"急救小白瓶",u:"100ml/瓶",r:1280,v:1100,c:[990,860,830,770]},
-    {n:"積雪草護手霜",u:"50ml/支",r:680,v:600,c:[530,455,440,410]},
-    {n:"法樂蓬洗髮露",u:"500ml/瓶",r:1280,v:1100,c:[990,860,830,770]},
-    {n:"法樂蓬養髮原液",u:"30ml/瓶",r:1080,v:900,c:[840,720,695,640]},
-    {n:"法樂蓬洗髮露 體驗包",u:"8ml/包",r:30,v:30,t:1,c:[24,21,20,17]}
+    {n:"急救小白瓶",u:"100ml/瓶",r:1280,d:1180,v:1100,c:[990,860,830,770]},
+    {n:"積雪草護手霜",u:"50ml/支",r:680,d:630,v:600,c:[530,455,440,410]},
+    {n:"法樂蓬洗髮露",u:"500ml/瓶",r:1280,d:1180,v:1100,c:[990,860,830,770]},
+    {n:"法樂蓬養髮原液",u:"30ml/瓶",r:1080,d:990,v:900,c:[840,720,695,640]},
+    {n:"法樂蓬洗髮露 體驗包",u:"8ml/包",r:30,d:30,v:30,t:1,c:[24,21,20,17]}
   ]},
   { cat:"其他", team:1, list:[
-    {n:"創業包",u:"1 份",r:null,v:null,c:[200,200,200,200]}
+    {n:"創業包",u:"1 份",r:null,d:null,v:null,c:[200,200,200,200]}
   ]}
 ];
 const SHIP = [0,60,70,80,130,150];
@@ -569,8 +572,7 @@ GROUPS.forEach((g,gi) => {
     row.dataset.key = key;
     row.innerHTML =
       '<div class="n"><b>' + p.n + ' <em>' + p.u + '</em></b>' +
-        (p.t ? '<span class="flat">$' + fmt(p.r) + '　體驗包不打折</span>'
-             : '<span>$' + fmt(p.v) + ' <s>原價 $' + fmt(p.r) + '</s></span>') +
+        '<span data-price class="' + (p.t ? 'flat' : '') + '"></span>' +
       '</div>' +
       '<div class="stepper"><button data-s="-1" aria-label="減少">−</button>' +
       '<output>0</output><button data-s="1" aria-label="增加">＋</button></div>';
@@ -584,6 +586,26 @@ GROUPS.forEach((g,gi) => {
   });
   addonsEl.appendChild(d);
 });
+
+function tierOf(){
+  let qr = 0, mc = 0;
+  cQty.forEach((q,i) => { qr += COMBOS[i].orig * q; mc += q * 3; });
+  GROUPS.forEach((g,gi) => {
+    if (g.team) return;
+    g.list.forEach((p,pi) => {
+      const q = aQty[gi + "-" + pi] || 0;
+      if (!q || p.t) return;
+      qr += p.r * q; mc += q;
+    });
+  });
+  if (qr >= 4000) return {k:"vip",  lab:"VIP價",     qr, mc};
+  if (mc >= 2)    return {k:"deal", lab:"兩盒優惠價", qr, mc};
+  return {k:"retail", lab:"單盒零售價", qr, mc};
+}
+function priceOf(p, t){
+  if (p.t) return p.r;
+  return t.k === "vip" ? p.v : t.k === "deal" ? p.d : p.r;
+}
 
 function pick(){
   const out = [];
@@ -613,6 +635,7 @@ const tShipBox = buildShip("tShipBox", () => tShip, v => { tShip = v; renderT();
 const jShipBox = buildShip("jShipBox", () => jShip, v => { jShip = v; renderJ(); });
 
 function renderC(){
+  const T = tierOf();
   let pay = 0, orig = 0, count = 0;
 
   [...combosEl.children].forEach((el,i) => {
@@ -631,11 +654,16 @@ function renderC(){
       const [g,pi] = row.dataset.key.split("-").map(Number);
       const p = GROUPS[g].list[pi];
       const q = aQty[row.dataset.key] || 0;
+      const up = priceOf(p, T);
       row.querySelector("output").textContent = q;
       row.querySelector('[data-s="-1"]').disabled = q === 0;
       row.classList.toggle("on", q > 0);
+      const ps = row.querySelector("[data-price]");
+      if (ps) ps.innerHTML = p.t
+        ? '$' + fmt(p.r) + '　體驗包不打折'
+        : '$' + fmt(up) + (up < p.r ? ' <s>原價 $' + fmt(p.r) + '</s>' : '');
       n += q;
-      pay  += q * (p.t ? p.r : p.v);
+      pay  += q * up;
       orig += q * p.r;
       count += q;
     });
@@ -647,6 +675,16 @@ function renderC(){
   cShipBox.paint();
   const goods = pay;
   pay += (goods > 0 ? cShip : 0);
+  const tb = document.getElementById("cTier");
+  if (T.k === "vip"){
+    tb.innerHTML = '目前用 <b>VIP 價</b> 計算（主商品零售價已達 $4,000）。體驗包不打折，也不計入門檻。';
+  } else if (T.k === "deal"){
+    tb.innerHTML = '目前用 <b>兩盒優惠價</b> 計算。零售價再滿 <b>$' + fmt(4000 - T.qr) +
+                   '</b> 就能升級 VIP 價。體驗包不打折，也不計入門檻。';
+  } else {
+    tb.innerHTML = '目前用 <b>單盒零售價</b> 計算。任選相同或不同主商品滿 2 盒就有優惠價，零售價滿 $4,000 就是 VIP 價。';
+  }
+
   const num = document.getElementById("cNum");
   num.innerHTML = '<i>$</i>' + fmt(pay);
   num.disabled = pay === 0;
@@ -676,10 +714,14 @@ document.getElementById("cCopy").onclick = () => {
   if (!pay) return;
   const nick = document.getElementById("nickname").value.trim() || "寶寶";
   const L = [];
+  const T = tierOf();
+  const hasCombo = cQty[0] > 0 || cQty[1] > 0;
   L.push(nick + " 💕");
   L.push("以下是你購買的方案～");
-  L.push("");
-  L.push("🥮 2026中秋組合｜9/17（四）－10/5（一）");
+  if (hasCombo){
+    L.push("");
+    L.push("🥮 2026中秋組合｜9/17（四）－10/5（一）");
+  }
   cQty.forEach((q,i) => {
     if (!q) return;
     const c = COMBOS[i];
@@ -692,11 +734,11 @@ document.getElementById("cCopy").onclick = () => {
   const add = pick();
   if (add.length){
     L.push("");
-    L.push("✨加購（VIP價）");
+    L.push(hasCombo ? "✨加購（" + T.lab + "）" : "✨商品（" + T.lab + "）");
     add.forEach(({p,q}) => {
-      const unit = p.t ? p.r : p.v;
+      const unit = priceOf(p, T);
       L.push("・" + p.n + " " + p.u + " × " + q + "　$" + fmt(unit * q) +
-             (p.t ? "" : "（原價 $" + fmt(p.r * q) + "）"));
+             (unit < p.r ? "（原價 $" + fmt(p.r * q) + "）" : ""));
     });
   }
   L.push("");
