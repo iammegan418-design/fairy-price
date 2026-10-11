@@ -168,10 +168,10 @@ details[open] summary .arw{transform:rotate(90deg)}
 .nick input[type=date]{font-weight:600;color:var(--ink)}
 .prod.on{background:var(--rose-soft)}
 
-.total{margin:18px 16px 0;background:var(--grad);box-shadow:0 10px 26px -16px var(--plum-deep);color:var(--onp);border-radius:16px;padding:20px}
+.total{margin:14px 16px 0;background:var(--grad);box-shadow:0 10px 26px -16px var(--plum-deep);color:var(--onp);border-radius:16px;padding:14px 18px}
 .total .lab{font-size:12px;color:var(--onpAcc2);letter-spacing:.16em}
 .total .num{display:block;width:100%;text-align:left;font-family:inherit;background:none;border:none;
-  padding:2px 0 0;cursor:pointer;color:var(--onp);font-size:54px;font-weight:900;letter-spacing:-.025em;font-variant-numeric:tabular-nums}
+  padding:2px 0 0;cursor:pointer;color:var(--onp);font-size:46px;font-weight:900;letter-spacing:-.025em;font-variant-numeric:tabular-nums}
 .total .num i{font-style:normal;font-size:29px;font-weight:700;color:var(--onpAcc2);margin-right:4px;vertical-align:7px}
 .total .num[disabled]{cursor:default;color:rgba(255,255,255,.45)}
 .total .num[disabled] i{color:rgba(255,255,255,.45)}
@@ -230,6 +230,16 @@ header::before{content:"";position:absolute;inset:0;border-radius:inherit;pointe
     rgba(255,240,226,.16) 42%,rgba(232,206,214,.24) 72%,rgba(255,255,255,.7) 100%);
   box-shadow:inset 0 0 6px rgba(255,255,255,.8),0 3px 10px rgba(126,106,87,.10)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.mini{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translate(-50%,140%);
+  width:min(488px,calc(100% - 32px));z-index:20;display:flex;align-items:center;gap:12px;
+  background:var(--grad);color:var(--onp);border:none;border-radius:16px;padding:10px 16px;font-family:inherit;text-align:left;
+  box-shadow:0 12px 28px -10px rgba(60,40,25,.55);transition:transform .25s ease;cursor:pointer}
+.mini.show{transform:translate(-50%,0)}
+.mini .ml{font-size:12px;color:var(--onpAcc2);letter-spacing:.1em;flex:none}
+.mini .mv{font-size:26px;font-weight:900;font-variant-numeric:tabular-nums;flex:1}
+.mini .mv i{font-style:normal;font-size:16px;color:var(--onpAcc2);margin-right:3px}
+.mini .mt{font-size:12px;color:var(--onpAcc);flex:none}
+footer{padding-bottom:84px}
 </style>
 </head>
 <body>
@@ -253,18 +263,6 @@ header::before{content:"";position:absolute;inset:0;border-radius:inherit;pointe
 
 <!-- ===== 客人方案 ===== -->
 <section id="paneA">
-  <div class="nick">
-    <label for="nickname">稱呼</label>
-    <input id="nickname" value="寶寶" maxlength="12" autocomplete="off">
-  </div>
-
-  <div class="sect">選商品 <span>· 自動套用優惠／VIP 價</span></div>
-  <div class="tierbar" id="cTier"></div>
-  <div id="addons"></div>
-
-  <div class="sect">運費</div>
-  <div class="ship" id="cShipBox"></div>
-
   <div class="total">
     <div class="lab" id="cLab">應付總金額</div>
     <button class="num" id="cNum"><i>$</i>0</button>
@@ -274,15 +272,40 @@ header::before{content:"";position:absolute;inset:0;border-radius:inherit;pointe
       <span>省下 <b id="cDiff">$0</b></span>
     </div>
   </div>
-
   <div class="actions">
     <button class="act main" id="cCopy" disabled>複製方案給客人</button>
     <button class="act" id="cReset" disabled>清空</button>
   </div>
+  <div class="sect">運費</div>
+  <div class="ship" id="cShipBox"></div>
+  <div class="nick">
+    <label for="nickname">稱呼</label>
+    <input id="nickname" value="寶寶" maxlength="12" autocomplete="off">
+  </div>
+
+  <div class="sect">選商品 <span>· 自動套用優惠／VIP 價</span></div>
+  <div class="tierbar" id="cTier"></div>
+  <div id="addons"></div>
+
 </section>
 
 <!-- ===== 團隊版 ===== -->
 <section id="paneB" hidden>
+  <div class="total">
+    <div class="lab" id="tLab">應付總金額</div>
+    <button class="num" id="tNum"><i>$</i>0</button>
+    <div class="tap" id="tTap">先選數量</div>
+    <div class="saveline" id="tSave" hidden>
+      <span>商品合計 <span id="tSsum">$0</span></span>
+      <span>預估可賺 <b id="tEsum">$0</b></span>
+    </div>
+  </div>
+  <div class="actions">
+    <button class="act main" id="tCopy" disabled>複製叫貨單</button>
+    <button class="act" id="tReset" disabled>清空</button>
+  </div>
+  <div class="sect">運費</div>
+  <div class="ship" id="tShipBox"></div>
   <div class="nick">
     <label for="orderName">叫貨人</label>
     <input id="orderName" placeholder="輸入名字" maxlength="16" autocomplete="off">
@@ -298,28 +321,26 @@ header::before{content:"";position:absolute;inset:0;border-radius:inherit;pointe
   <div class="sect">叫貨商品 <span>· 顯示你的進貨成本與利潤</span></div>
   <div id="orderAddons"></div>
 
-  <div class="sect">運費</div>
-  <div class="ship" id="tShipBox"></div>
-
-  <div class="total">
-    <div class="lab" id="tLab">應付總金額</div>
-    <button class="num" id="tNum"><i>$</i>0</button>
-    <div class="tap" id="tTap">先選數量</div>
-    <div class="saveline" id="tSave" hidden>
-      <span>商品合計 <span id="tSsum">$0</span></span>
-      <span>預估可賺 <b id="tEsum">$0</b></span>
-    </div>
-  </div>
-
-  <div class="actions">
-    <button class="act main" id="tCopy" disabled>複製叫貨單</button>
-    <button class="act" id="tReset" disabled>清空</button>
-  </div>
   <p class="note" style="margin-top:14px">預估可賺＝消費者零售價減去你的進貨成本。DM 未列入。創業包成本 $200，各級別相同。</p>
 </section>
 
 <!-- ===== 加盟試算 ===== -->
 <section id="paneC" hidden>
+  <div class="total">
+    <div class="lab" id="jLab">加盟總金額</div>
+    <button class="num" id="jNum"><i>$</i>0</button>
+    <div class="tap" id="jTap">先挑貨</div>
+    <div class="saveline" id="jSave" hidden>
+      <span>比 VIP 價省 <span id="jS1">$0</span></span>
+      <span>比零售價省 <b id="jS2">$0</b></span>
+    </div>
+  </div>
+  <div class="actions">
+    <button class="act main" id="jCopy" disabled>複製試算給客人</button>
+    <button class="act" id="jReset" disabled>清空</button>
+  </div>
+  <div class="sect">運費</div>
+  <div class="ship" id="jShipBox"></div>
   <div class="nick">
     <label for="jNick">對方名字</label>
     <input id="jNick" placeholder="寶寶" maxlength="16" autocomplete="off">
@@ -345,23 +366,6 @@ header::before{content:"";position:absolute;inset:0;border-radius:inherit;pointe
     <div class="l"><span>創業包</span><b id="jKit">$200</b></div>
   </div>
 
-  <div class="sect">運費</div>
-  <div class="ship" id="jShipBox"></div>
-
-  <div class="total">
-    <div class="lab" id="jLab">加盟總金額</div>
-    <button class="num" id="jNum"><i>$</i>0</button>
-    <div class="tap" id="jTap">先挑貨</div>
-    <div class="saveline" id="jSave" hidden>
-      <span>比 VIP 價省 <span id="jS1">$0</span></span>
-      <span>比零售價省 <b id="jS2">$0</b></span>
-    </div>
-  </div>
-
-  <div class="actions">
-    <button class="act main" id="jCopy" disabled>複製試算給客人</button>
-    <button class="act" id="jReset" disabled>清空</button>
-  </div>
   <p class="note" style="margin-top:14px" id="jNote"></p>
 </section>
 
@@ -394,6 +398,7 @@ header::before{content:"";position:absolute;inset:0;border-radius:inherit;pointe
 
 <div class="bubbles" id="bubbles" aria-hidden="true"></div>
 <footer>巧穎開發製作　提供仙女團隊使用</footer>
+<button class="mini" id="mini" type="button" aria-live="polite"><span class="ml" id="miniL">總金額</span><span class="mv" id="miniV"><i>$</i>0</span><span class="mt">回到上面 ↑</span></button>
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -1757,6 +1762,39 @@ function toast(msg){
 renderC();
 renderT();
 renderJ();
+
+/* ---- 浮動金額小視窗 ---- */
+(function(){
+  const mini = document.getElementById("mini");
+  const miniL = document.getElementById("miniL"), miniV = document.getElementById("miniV");
+  const sets = [["paneA","cLab","cNum"],["paneB","tLab","tNum"],["paneC","jLab","jNum"]];
+  let totalVisible = {};
+  function active(){ return sets.find(x => !document.getElementById(x[0]).hidden); }
+  function sync(){
+    const a = active();
+    if (!a){ mini.classList.remove("show"); return; }
+    const num = document.getElementById(a[2]);
+    miniL.textContent = document.getElementById(a[1]).textContent;
+    miniV.innerHTML = num.innerHTML;
+    const hasAmt = !num.disabled && !/^\s*\$?\s*0\s*$/.test(num.textContent);
+    mini.classList.toggle("show", hasAmt && !totalVisible[a[0]]);
+  }
+  const io = new IntersectionObserver(es => {
+    es.forEach(e => { totalVisible[e.target.closest("section").id] = e.isIntersecting; });
+    sync();
+  });
+  sets.forEach(x => {
+    const box = document.getElementById(x[2]).closest(".total");
+    io.observe(box);
+    new MutationObserver(sync).observe(box, {subtree:true, childList:true, characterData:true, attributes:true});
+    new MutationObserver(sync).observe(document.getElementById(x[0]), {attributes:true, attributeFilter:["hidden"]});
+  });
+  mini.addEventListener("click", () => {
+    const a = active(); if (!a) return;
+    document.getElementById(a[2]).closest(".total").scrollIntoView({behavior:"smooth", block:"center"});
+  });
+  sync();
+})();
 </script>
 </body>
 </html>
