@@ -1,0 +1,1755 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>仙女價格計算機</title>
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="仙女計算機">
+<meta name="theme-color" content="#9A8470">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --plum:#8E7A66;
+  --plum-deep:#6F5E4E;
+  --ink:#43382F;
+  --paper:#F4EFE9;
+  --card:#FFFDFA;
+  --line:#E7DED3;
+  --muted:#9A8C7E;
+  --rose:#A8776A;
+  --rose-soft:#F6ECE7;
+  --jade:#7F8A73;
+  --jade-soft:#EDEFE7;
+  --gold:#A88A55;
+  --gold-lt:#E6D7B8;
+  --grad:radial-gradient(120% 90% at 12% 0%,rgba(255,255,255,.38),rgba(255,255,255,0) 55%),linear-gradient(135deg,#B39D88 0%,#9A8470 50%,#7E6A57 100%);
+  --onp:#FFFFFF;
+  --onpDim:#EDE3D8;
+  --onpAcc:#EADFD2;
+  --onpAcc2:#F4EDE5;
+  --onpB:#F3DFB4;
+  --tabBg:#EAE2D8;
+  --off:#D6CBBE;
+  --foot:#A8998A;
+  --barGrad:linear-gradient(90deg,#EADFD2,#B39D88,#8E7A66);
+  --hairline:linear-gradient(90deg,rgba(255,255,255,.65),transparent);
+  --datesBg:rgba(255,255,255,.18);
+  --datesBd:rgba(255,255,255,.5);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{background:var(--plum-deep)}
+body{font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  background:var(--paper);color:var(--ink);max-width:520px;margin:0 auto;min-height:100vh;-webkit-font-smoothing:antialiased}
+
+header{background:var(--grad);box-shadow:0 8px 24px -14px var(--plum-deep);color:var(--onp);padding:28px 22px 22px;border-radius:0 0 18px 18px;position:relative}
+header::after{content:"";position:absolute;left:22px;right:22px;bottom:0;height:1px;background:var(--hairline)}
+.brand{font-size:11px;letter-spacing:.42em;color:var(--onpAcc);margin-bottom:11px;text-transform:uppercase}
+h1{font-family:"Noto Serif TC",serif;font-weight:700;font-size:30px;line-height:1.25;letter-spacing:.06em}
+.dates{display:inline-block;margin-top:11px;font-size:13px;font-weight:500;color:var(--onp);
+  background:var(--datesBg);border:1px solid var(--datesBd);padding:6px 13px;border-radius:999px;font-variant-numeric:tabular-nums}
+
+.tmpl{margin:12px 16px;background:var(--card);border:1.5px solid var(--line);border-radius:16px;overflow:hidden}
+.tmpl-h{display:flex;align-items:center;gap:10px;padding:15px 12px 15px 18px}
+.tmpl-h b{flex:1;font-size:16px;font-weight:700;line-height:1.4}
+.tmpl-h button{font-family:inherit;font-size:14px;font-weight:700;color:var(--onp);background:var(--grad);
+  border:none;border-radius:11px;padding:11px 17px;cursor:pointer;flex:none}
+.warn{margin:0 12px 12px;padding:12px 14px;border-radius:12px;background:var(--rose-soft);
+  border:1px solid var(--rose);font-size:13.5px;line-height:1.75;color:var(--rose);font-weight:600}
+.tmpl-h .sec{background:none;color:var(--plum);border:1.5px solid var(--line);font-weight:700}
+.tmpl details{margin:0;border:none;border-radius:0;background:none}
+.tmpl summary{padding:0 18px 14px;font-size:13.5px;font-weight:500;color:var(--muted)}
+.tmpl pre{margin:0;padding:2px 18px 18px;font-family:inherit;font-size:14px;line-height:1.85;
+  white-space:pre-wrap;word-break:break-word;color:var(--ink)}
+.themes{display:flex;gap:9px;margin-top:16px;align-items:center}
+.themes button{width:26px;height:26px;border-radius:50%;border:2px solid transparent;cursor:pointer;padding:0;
+  box-shadow:0 0 0 1px rgba(255,255,255,.35) inset}
+.themes button[aria-pressed="true"]{border-color:#fff;transform:scale(1.12)}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:16px 16px 0;background:var(--tabBg);padding:5px;border-radius:12px}
+.tab{font-family:inherit;font-size:12.5px;font-weight:700;color:var(--muted);background:none;border:none;padding:12px 4px;border-radius:11px;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--card);color:var(--plum);font-weight:800;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+
+.sect{margin:26px 20px 0;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.18em}
+.sect span{font-weight:400;letter-spacing:0}
+
+.nick{display:flex;align-items:center;gap:10px;margin:12px 16px;padding:6px 8px 6px 17px;
+  background:var(--card);border:1.5px solid var(--line);border-radius:14px}
+.nick label{font-size:14px;color:var(--muted);flex:none}
+.nick input{flex:1;min-width:0;font-family:inherit;font-size:16px;font-weight:600;color:var(--ink);
+  border:none;background:none;padding:11px 8px;outline:none}
+
+.card{margin:12px 16px;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.card.on{border-color:currentColor}
+.card.rose.on{border-color:var(--rose)}
+.card.jade.on{border-color:var(--jade)}
+.head{display:flex;align-items:center;gap:9px;padding:16px 18px 0}
+.dot{width:9px;height:9px;border-radius:50%;flex:none}
+.head b{font-size:17.5px;font-weight:700;letter-spacing:.02em}
+.rose .dot{background:var(--rose)}
+.jade .dot{background:var(--jade)}
+.items{padding:9px 18px 0;font-size:14.5px;line-height:1.85;color:var(--ink)}
+.gift{display:flex;gap:8px;align-items:baseline;margin:11px 18px 0;padding:10px 13px;border-radius:12px;font-size:14px;font-weight:500}
+.gift small{font-size:11.5px;font-weight:700;letter-spacing:.08em;padding:2px 7px;border-radius:6px;color:#fff;flex:none}
+.rose .gift{background:var(--rose-soft);color:var(--rose)}
+.rose .gift small{background:var(--rose)}
+.jade .gift{background:var(--jade-soft);color:var(--jade)}
+.jade .gift small{background:var(--jade)}
+
+.buy{display:flex;align-items:flex-end;gap:12px;padding:14px 12px 14px 18px}
+.buy .p{flex:1;min-width:0}
+.buy .vip{font-size:40px;font-weight:900;letter-spacing:-.025em;font-variant-numeric:tabular-nums;line-height:1}
+.buy .vip i{font-style:normal;font-size:23px;font-weight:700;margin-right:3px;vertical-align:4px;opacity:.55}
+.rose .vip{color:var(--rose)}
+.jade .vip{color:var(--jade)}
+.buy .orig{display:block;font-size:12.5px;color:var(--muted);margin-top:5px;font-variant-numeric:tabular-nums}
+.buy .orig s{opacity:.8}
+
+.stepper{display:flex;align-items:center;gap:2px;flex:none}
+.stepper button{width:38px;height:38px;font-size:20px;line-height:1;font-family:inherit;color:var(--plum);
+  background:var(--paper);border:none;border-radius:11px;cursor:pointer}
+.stepper button:disabled{color:var(--off);cursor:default}
+.stepper output{min-width:34px;text-align:center;font-size:18px;font-weight:800;font-variant-numeric:tabular-nums}
+
+.prog{margin:12px 16px;background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:16px 18px}
+.prog .t{display:flex;justify-content:space-between;align-items:baseline;font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.prog .t b{font-size:22px;font-weight:900;color:var(--ink);letter-spacing:-.01em}
+.bar{height:9px;border-radius:99px;background:var(--tabBg);margin:12px 0 10px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:99px;background:var(--barGrad);width:0;transition:width .25s}
+.prog .msg{font-size:13.5px;font-weight:700;color:var(--plum);font-variant-numeric:tabular-nums}
+.prog .msg.ok{color:var(--jade)}
+.sum{margin:12px 16px 0;background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:6px 18px 14px}
+.sum .l{display:flex;justify-content:space-between;padding:9px 0;font-size:14.5px;border-bottom:1px solid var(--paper);font-variant-numeric:tabular-nums}
+.sum .l:last-child{border:none}
+.sum .l span:first-child{color:var(--muted)}
+.sum .l b{font-weight:700}
+.sum .l.hi b{color:var(--rose)}
+.tierbar{margin:10px 16px 0;padding:13px 15px;border-radius:13px;background:var(--rose-soft);
+  border:1px solid var(--line);font-size:13.5px;line-height:1.75;color:var(--ink);font-weight:500}
+.tierbar b{color:var(--rose);font-weight:800}
+.ship{display:flex;flex-wrap:wrap;gap:7px;margin:10px 16px 0}
+.ship button{font-family:inherit;font-size:14.5px;font-weight:600;color:var(--plum);background:var(--card);
+  border:1.5px solid var(--line);border-radius:12px;padding:11px 15px;cursor:pointer;font-variant-numeric:tabular-nums}
+.ship button[aria-pressed="true"]{background:var(--plum);border-color:var(--plum);color:#fff;font-weight:800}
+.note{margin:2px 20px 0;font-size:12.5px;color:var(--muted);line-height:1.75}
+
+details{margin:8px 16px;background:var(--card);border:1.5px solid var(--line);border-radius:16px;overflow:hidden}
+details[open]{border-color:var(--off)}
+summary{list-style:none;cursor:pointer;padding:15px 18px;font-size:15.5px;font-weight:700;display:flex;align-items:center;gap:8px}
+summary::-webkit-details-marker{display:none}
+summary .cnt{margin-left:auto;font-size:12.5px;font-weight:700;color:#fff;background:var(--rose);
+  border-radius:999px;padding:2px 9px;font-variant-numeric:tabular-nums}
+summary .cnt[hidden]{display:none}
+summary .arw{color:var(--muted);font-size:13px;font-weight:400;transition:transform .15s}
+details[open] summary .arw{transform:rotate(90deg)}
+
+.prod{display:flex;align-items:center;gap:10px;padding:11px 12px 11px 18px;border-top:1px solid var(--paper)}
+.prod .n{flex:1;min-width:0}
+.prod .n b{display:block;font-size:14.5px;font-weight:600;line-height:1.4}
+.prod .n b em{font-style:normal;font-weight:400;color:var(--muted);font-size:12.5px}
+.prod .n span{display:block;font-size:13px;margin-top:3px;font-variant-numeric:tabular-nums;color:var(--rose);font-weight:700}
+.prod .n span s{color:var(--muted);font-weight:400;margin-left:6px}
+.prod .n span.flat{color:var(--muted);font-weight:500}
+.prod .n span.cost{color:var(--plum);font-weight:600}
+.nick input[type=date]{font-weight:600;color:var(--ink)}
+.prod.on{background:var(--rose-soft)}
+
+.total{margin:18px 16px 0;background:var(--grad);box-shadow:0 10px 26px -16px var(--plum-deep);color:var(--onp);border-radius:16px;padding:20px}
+.total .lab{font-size:12px;color:var(--onpAcc2);letter-spacing:.16em}
+.total .num{display:block;width:100%;text-align:left;font-family:inherit;background:none;border:none;
+  padding:2px 0 0;cursor:pointer;color:var(--onp);font-size:54px;font-weight:900;letter-spacing:-.025em;font-variant-numeric:tabular-nums}
+.total .num i{font-style:normal;font-size:29px;font-weight:700;color:var(--onpAcc2);margin-right:4px;vertical-align:7px}
+.total .num[disabled]{cursor:default;color:rgba(255,255,255,.45)}
+.total .num[disabled] i{color:rgba(255,255,255,.45)}
+.tap{margin-top:5px;font-size:12.5px;color:var(--onpAcc);font-variant-numeric:tabular-nums}
+.saveline{display:flex;justify-content:space-between;margin-top:13px;padding-top:13px;border-top:1px solid rgba(255,255,255,.16);
+  font-size:14px;color:var(--onpDim);font-variant-numeric:tabular-nums}
+.saveline b{color:var(--onpB);font-size:17px;font-weight:900}
+
+.actions{display:flex;gap:8px;margin:10px 16px 0}
+.act{flex:1;font-family:inherit;font-size:14.5px;font-weight:700;padding:14px 8px;border-radius:14px;cursor:pointer;
+  background:var(--card);color:var(--plum);border:1.5px solid var(--line)}
+.act.main{background:var(--grad);color:var(--onp);border-color:transparent;letter-spacing:.05em}
+.act:disabled{background:var(--card);color:var(--off);border-color:var(--line);cursor:default}
+
+.earn{display:flex;align-items:center;gap:14px;margin:10px 16px;padding:15px 17px;background:var(--card);border:1.5px solid var(--line);border-radius:16px}
+.earn .info{flex:1;min-width:0}
+.earn .info b{display:block;font-size:16px;font-weight:700}
+.earn .info span{display:block;font-size:12.5px;color:var(--muted);margin-top:3px;font-variant-numeric:tabular-nums}
+.earn .val{font-family:inherit;background:none;border:none;cursor:pointer;text-align:right;padding:0}
+.earn .val em{display:block;font-style:normal;font-size:12px;color:var(--muted);margin-bottom:-1px}
+.earn .val b{font-size:29px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.earn.rose .val b{color:var(--rose)}
+.earn.jade .val b{color:var(--jade)}
+
+.levels{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:14px 16px 4px}
+.level{font-family:inherit;font-size:14.5px;font-weight:500;color:var(--plum);background:var(--card);
+  border:1px solid var(--line);border-radius:11px;padding:13px 8px;cursor:pointer;transition:background .12s,color .12s,border-color .12s}
+.level[aria-pressed="true"]{background:var(--grad);border-color:transparent;color:var(--onp);font-weight:700;letter-spacing:.04em}
+
+.row{display:flex;align-items:center;gap:12px;margin:10px 16px;padding:12px 12px 12px 17px;
+  background:var(--card);border:1.5px solid var(--line);border-radius:16px}
+.row .info{flex:1;min-width:0}
+.row .info b{display:block;font-size:16px;font-weight:700}
+.row .info span{display:block;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:2px}
+.row.zero .info b,.row.zero .info span{opacity:.5}
+
+footer{margin-top:34px;padding:20px 20px 30px;text-align:center;font-size:11px;color:var(--foot);line-height:2;letter-spacing:.08em;border-top:1px solid var(--line)}
+[hidden]{display:none}
+button:focus-visible,summary:focus-visible,input:focus-visible{outline:2.5px solid var(--rose);outline-offset:2px}
+#toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,14px);background:var(--ink);color:#fff;
+  font-size:15px;font-weight:500;padding:12px 20px;border-radius:999px;opacity:0;pointer-events:none;
+  transition:opacity .18s,transform .18s;white-space:nowrap;font-variant-numeric:tabular-nums}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+/* 仙女泡泡 */
+header>*,.tabs,section,footer{position:relative;z-index:1}
+header::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:
+   radial-gradient(circle at 84% 30%,rgba(255,255,255,.75) 0 2px,rgba(255,255,255,.22) 3px 22px,rgba(255,255,255,.5) 23px,transparent 24px),
+   radial-gradient(circle at 70% 70%,rgba(255,255,255,.7) 0 1.5px,rgba(255,255,255,.18) 2.5px 11px,rgba(255,255,255,.45) 12px,transparent 13px),
+   radial-gradient(circle at 93% 78%,rgba(255,255,255,.6) 0 1px,rgba(255,255,255,.16) 2px 7px,rgba(255,255,255,.4) 8px,transparent 9px),
+   radial-gradient(circle at 60% 18%,rgba(255,255,255,.55) 0 1px,rgba(255,255,255,.14) 2px 6px,transparent 7px)}
+.bubbles{position:fixed;top:0;bottom:0;left:50%;width:min(520px,100%);transform:translateX(-50%);
+  overflow:hidden;pointer-events:none;z-index:0}
+.bubbles span{position:absolute;bottom:-70px;border-radius:50%;opacity:0;
+  background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.95) 0 7%,rgba(255,255,255,.35) 17%,
+    rgba(255,240,226,.16) 42%,rgba(232,206,214,.24) 72%,rgba(255,255,255,.7) 100%);
+  box-shadow:inset 0 0 6px rgba(255,255,255,.8),0 3px 10px rgba(126,106,87,.10);
+  animation:rise linear infinite}
+@keyframes rise{
+  0%{transform:translate(0,0) scale(.9);opacity:0}
+  12%{opacity:.85}
+  50%{transform:translate(16px,-55vh) scale(1)}
+  88%{opacity:.75}
+  100%{transform:translate(-12px,-112vh) scale(1.05);opacity:0}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">仙女團隊</div>
+  <h1>仙女價格計算機</h1>
+</header>
+
+<div class="tabs" role="tablist">
+  <button class="tab" id="tabA" role="tab" aria-selected="true">客人方案</button>
+  <button class="tab" id="tabB" role="tab" aria-selected="false">團隊叫貨</button>
+  <button class="tab" id="tabC" role="tab" aria-selected="false">加盟試算</button>
+  <button class="tab" id="tabD" role="tab" aria-selected="false">話術庫</button>
+</div>
+
+<!-- ===== 客人方案 ===== -->
+<section id="paneA">
+  <div class="nick">
+    <label for="nickname">稱呼</label>
+    <input id="nickname" value="寶寶" maxlength="12" autocomplete="off">
+  </div>
+
+  <div class="sect">選商品 <span>· 自動套用優惠／VIP 價</span></div>
+  <div class="tierbar" id="cTier"></div>
+  <div id="addons"></div>
+
+  <div class="sect">運費</div>
+  <div class="ship" id="cShipBox"></div>
+
+  <div class="total">
+    <div class="lab" id="cLab">應付總金額</div>
+    <button class="num" id="cNum"><i>$</i>0</button>
+    <div class="tap" id="cTap">先選商品</div>
+    <div class="saveline" id="cSave" hidden>
+      <span>商品原價共 <span id="cOrig">$0</span></span>
+      <span>省下 <b id="cDiff">$0</b></span>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="act main" id="cCopy" disabled>複製方案給客人</button>
+    <button class="act" id="cReset" disabled>清空</button>
+  </div>
+</section>
+
+<!-- ===== 團隊版 ===== -->
+<section id="paneB" hidden>
+  <div class="nick">
+    <label for="orderName">叫貨人</label>
+    <input id="orderName" placeholder="輸入名字" maxlength="16" autocomplete="off">
+  </div>
+  <div class="nick">
+    <label for="orderDate">日期</label>
+    <input id="orderDate" type="date">
+  </div>
+
+  <div class="sect">加盟級別</div>
+  <div class="levels" id="levels"></div>
+
+  <div class="sect">叫貨商品 <span>· 顯示你的進貨成本與利潤</span></div>
+  <div id="orderAddons"></div>
+
+  <div class="sect">運費</div>
+  <div class="ship" id="tShipBox"></div>
+
+  <div class="total">
+    <div class="lab" id="tLab">應付總金額</div>
+    <button class="num" id="tNum"><i>$</i>0</button>
+    <div class="tap" id="tTap">先選數量</div>
+    <div class="saveline" id="tSave" hidden>
+      <span>商品合計 <span id="tSsum">$0</span></span>
+      <span>預估可賺 <b id="tEsum">$0</b></span>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="act main" id="tCopy" disabled>複製叫貨單</button>
+    <button class="act" id="tReset" disabled>清空</button>
+  </div>
+  <p class="note" style="margin-top:14px">預估可賺＝消費者零售價減去你的進貨成本。DM 未列入。創業包成本 $200，各級別相同。</p>
+</section>
+
+<!-- ===== 加盟試算 ===== -->
+<section id="paneC" hidden>
+  <div class="nick">
+    <label for="jNick">對方名字</label>
+    <input id="jNick" placeholder="寶寶" maxlength="16" autocomplete="off">
+  </div>
+
+  <div class="sect">想加入哪一個級別</div>
+  <div class="levels" id="jLevels"></div>
+
+  <div class="prog">
+    <div class="t"><span>已備貨</span><b id="jNow">$0</b></div>
+    <div class="bar"><i id="jBar"></i></div>
+    <div class="msg" id="jMsg"></div>
+  </div>
+
+  <div class="sect">挑選備貨商品</div>
+  <div id="jPick"></div>
+
+  <div class="sect">試算結果</div>
+  <div class="sum">
+    <div class="l"><span>一般客人零售買</span><b id="jRetail">$0</b></div>
+    <div class="l"><span>用 VIP 價買</span><b id="jVip">$0</b></div>
+    <div class="l"><span>加盟後成本價</span><b id="jCost">$0</b></div>
+    <div class="l"><span>創業包</span><b id="jKit">$200</b></div>
+  </div>
+
+  <div class="sect">運費</div>
+  <div class="ship" id="jShipBox"></div>
+
+  <div class="total">
+    <div class="lab" id="jLab">加盟總金額</div>
+    <button class="num" id="jNum"><i>$</i>0</button>
+    <div class="tap" id="jTap">先挑貨</div>
+    <div class="saveline" id="jSave" hidden>
+      <span>比 VIP 價省 <span id="jS1">$0</span></span>
+      <span>比零售價省 <b id="jS2">$0</b></span>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="act main" id="jCopy" disabled>複製試算給客人</button>
+    <button class="act" id="jReset" disabled>清空</button>
+  </div>
+  <p class="note" style="margin-top:14px" id="jNote"></p>
+</section>
+
+<!-- ===== 新人流程 ===== -->
+<section id="paneD" hidden>
+  <div class="sect">下次補貨時間 <span>· 含蜜月期</span></div>
+  <div class="nick">
+    <label for="rDate">加盟日期</label>
+    <input id="rDate" type="date">
+  </div>
+  <div class="levels" id="rLevels"></div>
+  <div class="sum" id="rOut"></div>
+  <div class="actions">
+    <button class="act main" id="rCopy">複製補貨時間</button>
+  </div>
+
+  <div class="sect">產品介紹 <span>· 客人問就傳這個</span></div>
+  <div id="prods"></div>
+
+  <div class="sect">限動素材 <span>· 只能放限動</span></div>
+  <div id="shorts"></div>
+
+  <div class="sect">銷售話術 <span>· 給夥伴練習用</span></div>
+  <div id="sales"></div>
+
+  <div class="sect">對接話術 <span>· 點複製直接貼 LINE</span></div>
+  <div id="tmpls"></div>
+  <p class="note" style="margin-top:16px">內容會照原樣複製，貼上後可以再自行調整稱呼或加句子。</p>
+</section>
+
+<div class="bubbles" id="bubbles" aria-hidden="true"></div>
+<footer>巧穎開發製作　提供仙女團隊使用</footer>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const LEVELS = [
+  { name:"實習加盟" },
+  { name:"三級零售加盟" },
+  { name:"三級輔導督導加盟" },
+  { name:"二級輔導督導加盟" }
+];
+const GROUPS = [
+  { cat:"體重管理系列", list:[
+    {n:"纖纖飲X",u:"14入/盒",r:1480,d:1380,v:1280,c:[1160,990,955,880]},
+    {n:"纖飄錠",u:"60錠/盒",r:1480,d:1380,v:1280,c:[1160,990,955,880]},
+    {n:"雪花紫纖飲",u:"14包/盒",r:990,d:900,v:830,c:[780,660,635,580]},
+    {n:"爆纖錠",u:"120錠/罐",r:880,d:800,v:740,c:[660,580,560,520]},
+    {n:"植萃纖酵宿",u:"60錠/盒",r:990,d:900,v:830,c:[780,660,635,580]},
+    {n:"肽纖飲 可可／奶茶風味",u:"10入/盒",r:990,d:900,v:830,c:[780,660,635,580]},
+    {n:"爆纖錠 體驗包",u:"30錠/包",r:240,d:240,v:240,t:1,c:[190,164,158,146]},
+    {n:"植萃纖酵宿 體驗包",u:"10錠/包",r:190,d:190,v:190,t:1,c:[145,117,113,103]}
+  ]},
+  { cat:"機能保健系列", list:[
+    {n:"複方金盞花葉黃素EX飲",u:"12入/盒",r:1080,d:990,v:900,c:[840,720,695,640]},
+    {n:"金盞花葉黃素高鈣晶亮凍",u:"10入/盒",r:680,d:630,v:600,c:[530,455,440,410]},
+    {n:"高機能益生菌",u:"30包/盒",r:1280,d:1180,v:1100,c:[990,860,830,770]},
+    {n:"9國英雄TURBO極速錠",u:"20錠/包",r:680,d:630,v:600,c:[530,455,440,410]},
+    {n:"療肺草正冠茶",u:"20包/盒",r:990,d:900,v:830,c:[780,660,635,580]},
+    {n:"固樂纖",u:"60錠/盒",r:1680,d:1580,v:1480,c:[1260,1080,1040,920]}
+  ]},
+  { cat:"美肌保養", list:[
+    {n:"水光錠",u:"60顆/盒",r:1680,d:1580,v:1480,c:[1260,1080,1040,920]},
+    {n:"水光繃帶面膜 精裝盒",u:"5片/盒",r:700,d:650,v:600,c:[550,500,485,450]},
+    {n:"雪聚露",u:"120ml/瓶",r:1280,d:1180,v:1100,c:[990,860,830,770]},
+    {n:"婕肌零洗卸凝膠",u:"200ml/瓶",r:990,d:900,v:830,c:[780,660,635,580]},
+    {n:"精純玻尿酸保濕原液",u:"30ml/瓶",r:990,d:900,v:830,c:[780,660,635,580]},
+    {n:"婕肌零 體驗包",u:"7ml/包",r:40,d:40,v:40,t:1,c:[30,25,24,20]}
+  ]},
+  { cat:"美體美髮", list:[
+    {n:"急救小白瓶",u:"100ml/瓶",r:1280,d:1180,v:1100,c:[990,860,830,770]},
+    {n:"積雪草護手霜",u:"50ml/支",r:680,d:630,v:600,c:[530,455,440,410]},
+    {n:"法樂蓬洗髮露",u:"500ml/瓶",r:1280,d:1180,v:1100,c:[990,860,830,770]},
+    {n:"法樂蓬養髮原液",u:"30ml/瓶",r:1080,d:990,v:900,c:[840,720,695,640]},
+    {n:"法樂蓬洗髮露 體驗包",u:"8ml/包",r:30,d:30,v:30,t:1,c:[24,21,20,17]}
+  ]},
+  { cat:"其他", team:1, list:[
+    {n:"創業包",u:"1 份",r:null,d:null,v:null,c:[200,200,200,200]}
+  ]}
+];
+const SHIP = [0,60,70,80,130,150];
+let cShip = 0, tShip = 0, jShip = 0;
+
+const fmt = n => n.toLocaleString("en-US");
+const aQty = {};
+let cur = 0;
+
+
+/* ---- 仙女泡泡 ---- */
+(function(){
+  const box = document.getElementById("bubbles");
+  for (let i = 0; i < 16; i++){
+    const b = document.createElement("span");
+    const size = 14 + Math.random() * 42;
+    const dur = 16 + Math.random() * 14;
+    b.style.cssText = "width:" + size + "px;height:" + size + "px;left:" + (Math.random() * 94) + "%;" +
+      "animation-duration:" + dur + "s;animation-delay:-" + (Math.random() * dur) + "s";
+    box.appendChild(b);
+  }
+})();
+
+/* ---- 分頁 ---- */
+const TABS = ["tabA","tabB","tabC","tabD"].map(id => document.getElementById(id));
+const PANES = ["paneA","paneB","paneC","paneD"].map(id => document.getElementById(id));
+function tab(i){
+  TABS.forEach((t,k) => t.setAttribute("aria-selected", k === i));
+  PANES.forEach((p,k) => p.hidden = k !== i);
+  window.scrollTo({top:0});
+}
+TABS.forEach((t,i) => t.onclick = () => tab(i));
+
+/* ---- 客人：商品 ---- */
+const addonsEl = document.getElementById("addons");
+GROUPS.forEach((g,gi) => {
+  if (g.team) return;
+  const d = document.createElement("details");
+  d.innerHTML = '<summary><span class="arw">▶</span>' + g.cat +
+                '<span class="cnt" data-cnt hidden>0</span></summary>';
+  g.list.forEach((p,pi) => {
+    const key = gi + "-" + pi;
+    const row = document.createElement("div");
+    row.className = "prod";
+    row.dataset.key = key;
+    row.innerHTML =
+      '<div class="n"><b>' + p.n + ' <em>' + p.u + '</em></b>' +
+        '<span data-price class="' + (p.t ? 'flat' : '') + '"></span>' +
+      '</div>' +
+      '<div class="stepper"><button data-s="-1" aria-label="減少">−</button>' +
+      '<output>0</output><button data-s="1" aria-label="增加">＋</button></div>';
+    row.querySelectorAll("[data-s]").forEach(b => {
+      b.onclick = () => {
+        aQty[key] = Math.min(99, Math.max(0, (aQty[key]||0) + (+b.dataset.s)));
+        renderC();
+      };
+    });
+    d.appendChild(row);
+  });
+  addonsEl.appendChild(d);
+});
+
+function tierOf(){
+  let qr = 0, mc = 0;
+  GROUPS.forEach((g,gi) => {
+    if (g.team) return;
+    g.list.forEach((p,pi) => {
+      const q = aQty[gi + "-" + pi] || 0;
+      if (!q || p.t) return;
+      qr += p.r * q; mc += q;
+    });
+  });
+  if (qr >= 4000) return {k:"vip",  lab:"VIP價",     qr, mc};
+  if (mc >= 2)    return {k:"deal", lab:"兩盒優惠價", qr, mc};
+  return {k:"retail", lab:"單盒零售價", qr, mc};
+}
+function priceOf(p, t){
+  if (p.t) return p.r;
+  return t.k === "vip" ? p.v : t.k === "deal" ? p.d : p.r;
+}
+
+function pick(){
+  const out = [];
+  GROUPS.forEach((g,gi) => {
+    if (g.team) return;
+    g.list.forEach((p,pi) => {
+      const q = aQty[gi + "-" + pi] || 0;
+      if (q > 0) out.push({p, q});
+    });
+  });
+  return out;
+}
+
+function buildShip(boxId, get, set){
+  const box = document.getElementById(boxId);
+  SHIP.forEach(v => {
+    const b = document.createElement("button");
+    b.textContent = v === 0 ? "免運" : "$" + v;
+    b.onclick = () => set(v);
+    box.appendChild(b);
+  });
+  box.paint = () => [...box.children].forEach((b,i) => b.setAttribute("aria-pressed", SHIP[i] === get()));
+  return box;
+}
+const cShipBox = buildShip("cShipBox", () => cShip, v => { cShip = v; renderC(); });
+const tShipBox = buildShip("tShipBox", () => tShip, v => { tShip = v; renderT(); });
+const jShipBox = buildShip("jShipBox", () => jShip, v => { jShip = v; renderJ(); });
+
+function renderC(){
+  const T = tierOf();
+  let pay = 0, orig = 0, count = 0;
+
+  [...addonsEl.children].forEach((d,gi) => {
+    let n = 0;
+    d.querySelectorAll(".prod").forEach(row => {
+      const [g,pi] = row.dataset.key.split("-").map(Number);
+      const p = GROUPS[g].list[pi];
+      const q = aQty[row.dataset.key] || 0;
+      const up = priceOf(p, T);
+      row.querySelector("output").textContent = q;
+      row.querySelector('[data-s="-1"]').disabled = q === 0;
+      row.classList.toggle("on", q > 0);
+      const ps = row.querySelector("[data-price]");
+      if (ps) ps.innerHTML = p.t
+        ? '$' + fmt(p.r) + '　體驗包不打折'
+        : '$' + fmt(up) + (up < p.r ? ' <s>原價 $' + fmt(p.r) + '</s>' : '');
+      n += q;
+      pay  += q * up;
+      orig += q * p.r;
+      count += q;
+    });
+    const c = d.querySelector("[data-cnt]");
+    c.textContent = n;
+    c.hidden = n === 0;
+  });
+
+  cShipBox.paint();
+  const goods = pay;
+  pay += (goods > 0 ? cShip : 0);
+  const tb = document.getElementById("cTier");
+  if (T.k === "vip"){
+    tb.innerHTML = '目前用 <b>VIP 價</b> 計算（主商品零售價已達 $4,000）。體驗包不打折，也不計入門檻。';
+  } else if (T.k === "deal"){
+    tb.innerHTML = '目前用 <b>兩盒優惠價</b> 計算。零售價再滿 <b>$' + fmt(4000 - T.qr) +
+                   '</b> 就能升級 VIP 價。體驗包不打折，也不計入門檻。';
+  } else {
+    tb.innerHTML = '目前用 <b>單盒零售價</b> 計算。任選相同或不同主商品滿 2 盒就有優惠價，零售價滿 $4,000 就是 VIP 價。';
+  }
+
+  const num = document.getElementById("cNum");
+  num.innerHTML = '<i>$</i>' + fmt(pay);
+  num.disabled = pay === 0;
+  document.getElementById("cLab").textContent = count > 0 ? "應付總金額 · 共 " + count + " 件" : "應付總金額";
+  document.getElementById("cTap").textContent = pay > 0 ? "點金額複製" : "先選商品";
+  document.getElementById("cSave").hidden = pay === 0;
+  document.getElementById("cOrig").textContent = "$" + fmt(orig);
+  document.getElementById("cDiff").textContent = "$" + fmt(orig - goods);
+  document.getElementById("cCopy").disabled = pay === 0;
+  document.getElementById("cReset").disabled = pay === 0;
+  return {pay, orig, goods};
+}
+
+document.getElementById("cNum").onclick = () => {
+  const {pay} = renderC();
+  if (pay) copy(String(pay), "已複製 " + fmt(pay));
+};
+document.getElementById("cReset").onclick = () => {
+  Object.keys(aQty).forEach(k => aQty[k] = 0);
+  cShip = 0;
+  renderC();
+};
+
+document.getElementById("cCopy").onclick = () => {
+  const {pay, orig, goods} = renderC();
+  if (!pay) return;
+  const nick = document.getElementById("nickname").value.trim() || "寶寶";
+  const L = [];
+  const T = tierOf();
+  L.push(nick + " 💕");
+  L.push("以下是你購買的方案～");
+  const add = pick();
+  if (add.length){
+    L.push("");
+    L.push("✨商品（" + T.lab + "）");
+    add.forEach(({p,q}) => {
+      const unit = priceOf(p, T);
+      L.push("・" + p.n + " " + p.u + " × " + q + "　$" + fmt(unit * q) +
+             (unit < p.r ? "（原價 $" + fmt(p.r * q) + "）" : ""));
+    });
+  }
+  L.push("");
+  L.push("－－－－－－－－");
+  L.push("🛍 商品原價共 $" + fmt(orig));
+  L.push("💰 總共省下 $" + fmt(orig - goods));
+  if (cShip > 0){
+    L.push("🚚 運費 $" + fmt(cShip));
+  }
+  L.push("💗 應付總金額 $" + fmt(pay));
+  copy(L.join("\n"), "方案已複製");
+};
+
+/* ---- 團隊版 ---- */
+const oQty = {};
+const dEl = document.getElementById("orderDate");
+dEl.value = new Date().toLocaleDateString("sv-SE");
+
+const levelsEl = document.getElementById("levels");
+LEVELS.forEach((lv,i) => {
+  const b = document.createElement("button");
+  b.className = "level";
+  b.textContent = lv.name;
+  b.setAttribute("aria-pressed", i === 0);
+  b.onclick = () => { cur = i; renderT(); };
+  levelsEl.appendChild(b);
+});
+
+const ordEl = document.getElementById("orderAddons");
+GROUPS.forEach((g,gi) => {
+  const d = document.createElement("details");
+  d.innerHTML = '<summary><span class="arw">▶</span>' + g.cat + '<span class="cnt" data-cnt hidden>0</span></summary>';
+  g.list.forEach((p,pi) => {
+    const key = gi + "-" + pi;
+    const row = document.createElement("div");
+    row.className = "prod";
+    row.dataset.key = key;
+    row.innerHTML =
+      '<div class="n"><b>' + p.n + ' <em>' + p.u + '</em></b><span class="cost" data-cost></span></div>' +
+      '<div class="stepper"><button data-s="-1" aria-label="減少">−</button><output>0</output>' +
+      '<button data-s="1" aria-label="增加">＋</button></div>';
+    row.querySelectorAll("[data-s]").forEach(b => {
+      b.onclick = () => {
+        oQty[key] = Math.min(99, Math.max(0, (oQty[key]||0) + (+b.dataset.s)));
+        renderT();
+      };
+    });
+    d.appendChild(row);
+  });
+  ordEl.appendChild(d);
+});
+
+function ordered(){
+  const out = [];
+  GROUPS.forEach((g,gi) => g.list.forEach((p,pi) => {
+    const q = oQty[gi + "-" + pi] || 0;
+    if (q > 0 && p.c[cur] != null) out.push({p, q});
+  }));
+  return out;
+}
+
+function renderT(){
+  [...levelsEl.children].forEach((b,i) => b.setAttribute("aria-pressed", i === cur));
+
+  let count = 0, sSum = 0, sEarn = 0;
+  [...ordEl.children].forEach(d => {
+    let n = 0;
+    d.querySelectorAll(".prod").forEach(row => {
+      const [g,pi] = row.dataset.key.split("-").map(Number);
+      const p = GROUPS[g].list[pi];
+      const cost = p.c[cur];
+      let q = oQty[row.dataset.key] || 0;
+      if (cost == null){ q = 0; oQty[row.dataset.key] = 0; }
+      row.querySelector("output").textContent = q;
+      row.querySelector("[data-cost]").textContent =
+        cost == null ? "此級別成本未提供"
+                     : "成本 $" + fmt(cost) + (p.r ? "　零售 $" + fmt(p.r) + "　賺 $" + fmt(p.r - cost) : "") +
+                       (q > 0 ? "　小計 $" + fmt(cost*q) : "");
+      row.querySelector('[data-s="-1"]').disabled = q === 0;
+      row.querySelector('[data-s="1"]').disabled  = cost == null;
+      row.classList.toggle("on", q > 0);
+      n += q;
+      if (cost != null){ sSum += cost*q; if (p.r) sEarn += (p.r - cost)*q; count += q; }
+    });
+    const c = d.querySelector("[data-cnt]");
+    c.textContent = n;
+    c.hidden = n === 0;
+  });
+
+  tShipBox.paint();
+  const goods = sSum;
+  const t = goods + (goods > 0 ? tShip : 0);
+  const num = document.getElementById("tNum");
+  num.innerHTML = '<i>$</i>' + fmt(t);
+  num.disabled = t === 0;
+  document.getElementById("tLab").textContent = count ? "應付總金額 · 共 " + count + " 件" : "應付總金額";
+  document.getElementById("tTap").textContent = t ? "點金額複製" : "先選數量";
+  document.getElementById("tSave").hidden = t === 0;
+  document.getElementById("tSsum").textContent = "$" + fmt(sSum);
+  document.getElementById("tEsum").textContent = "$" + fmt(sEarn);
+  document.getElementById("tCopy").disabled = t === 0;
+  document.getElementById("tReset").disabled = t === 0;
+  return {t, goods, sSum, earn: sEarn};
+}
+
+document.getElementById("tNum").onclick = () => {
+  const {t} = renderT();
+  if (t) copy(String(t), "已複製 " + fmt(t));
+};
+document.getElementById("tReset").onclick = () => {
+  Object.keys(oQty).forEach(k => oQty[k] = 0);
+  tShip = 0;
+  renderT();
+};
+document.getElementById("tCopy").onclick = () => {
+  const {t, goods, earn} = renderT();
+  if (!t) return;
+  const who = document.getElementById("orderName").value.trim();
+  const day = (dEl.value || "").replace(/-/g, "/");
+  const L = ["📦 叫貨單"];
+  if (who) L.push("叫貨人：" + who);
+  if (day) L.push("日期：" + day);
+  L.push("級別：" + LEVELS[cur].name);
+
+  const items = ordered();
+  if (items.length){
+    L.push("");
+    L.push("【商品】");
+    items.forEach(({p,q}) => {
+      L.push(p.n + " " + p.u + " × " + q + "　$" + fmt(p.c[cur] * q));
+    });
+  }
+  L.push("");
+  L.push("－－－－－－－－");
+  if (tShip > 0){
+    L.push("商品合計 $" + fmt(goods));
+    L.push("運費 $" + fmt(tShip));
+  }
+  L.push("應付總金額 $" + fmt(t));
+  L.push("（預估可賺 $" + fmt(earn) + "）");
+  copy(L.join("\n"), "叫貨單已複製");
+};
+
+/* ---- 加盟試算 ---- */
+const JOIN = [
+  { name:"實習零售加盟商", lvl:0, stock:6600,  kit:200, refill:"每兩個月補貨額 $6,000（可累積）" },
+  { name:"三級零售加盟商", lvl:1, stock:19600, kit:200, refill:"每兩個月補貨額 $12,000（可累積）" }
+];
+let jSel = 0;
+const jQty = {};
+
+const jLevelsEl = document.getElementById("jLevels");
+JOIN.forEach((j,i) => {
+  const b = document.createElement("button");
+  b.className = "level";
+  b.innerHTML = j.name + "<br><small style=\"font-weight:400;font-size:12.5px;opacity:.75\">$" +
+                fmt(j.stock + j.kit) + "</small>";
+  b.setAttribute("aria-pressed", i === 0);
+  b.onclick = () => { jSel = i; renderJ(); };
+  jLevelsEl.appendChild(b);
+});
+
+const jPickEl = document.getElementById("jPick");
+GROUPS.forEach((g,gi) => {
+  if (g.team) return;
+  const d = document.createElement("details");
+  d.innerHTML = '<summary><span class="arw">▶</span>' + g.cat + '<span class="cnt" data-cnt hidden>0</span></summary>';
+  g.list.forEach((p,pi) => {
+    const key = gi + "-" + pi;
+    const row = document.createElement("div");
+    row.className = "prod";
+    row.dataset.key = key;
+    row.innerHTML =
+      '<div class="n"><b>' + p.n + ' <em>' + p.u + '</em></b><span class="cost" data-jc></span></div>' +
+      '<div class="stepper"><button data-s="-1" aria-label="減少">−</button><output>0</output>' +
+      '<button data-s="1" aria-label="增加">＋</button></div>';
+    row.querySelectorAll("[data-s]").forEach(b => {
+      b.onclick = () => { jQty[key] = Math.min(99, Math.max(0,(jQty[key]||0)+(+b.dataset.s))); renderJ(); };
+    });
+    d.appendChild(row);
+  });
+  jPickEl.appendChild(d);
+});
+
+function jPicked(){
+  const L = [], lv = JOIN[jSel].lvl;
+  GROUPS.forEach((g,gi) => {
+    if (g.team) return;
+    g.list.forEach((p,pi) => {
+      const q = jQty[gi + "-" + pi] || 0;
+      if (q > 0 && p.c[lv] != null) L.push({p, q});
+    });
+  });
+  return L;
+}
+
+function renderJ(){
+  const J = JOIN[jSel], lv = J.lvl;
+  [...jLevelsEl.children].forEach((b,i) => b.setAttribute("aria-pressed", i === jSel));
+
+  let cost = 0, vip = 0, retail = 0, n = 0;
+  [...jPickEl.children].forEach(d => {
+    let cnt = 0;
+    d.querySelectorAll(".prod").forEach(row => {
+      const [g,pi] = row.dataset.key.split("-").map(Number);
+      const p = GROUPS[g].list[pi];
+      const c = p.c[lv];
+      let q = jQty[row.dataset.key] || 0;
+      if (c == null){ q = 0; jQty[row.dataset.key] = 0; }
+      row.querySelector("output").textContent = q;
+      row.querySelector("[data-jc]").textContent =
+        c == null ? "此級別成本未提供"
+                  : "成本 $" + fmt(c) + "　VIP $" + fmt(p.t ? p.r : p.v) + "　零售 $" + fmt(p.r) +
+                    (q > 0 ? "　小計 $" + fmt(c*q) : "");
+      row.querySelector('[data-s="-1"]').disabled = q === 0;
+      row.querySelector('[data-s="1"]').disabled  = c == null;
+      row.classList.toggle("on", q > 0);
+      cnt += q;
+      if (c != null){ cost += c*q; vip += (p.t ? p.r : p.v)*q; retail += p.r*q; n += q; }
+    });
+    const cEl = d.querySelector("[data-cnt]");
+    cEl.textContent = cnt;
+    cEl.hidden = cnt === 0;
+  });
+
+  const pct = Math.min(100, Math.round(cost / J.stock * 100));
+  document.getElementById("jNow").textContent = "$" + fmt(cost) + " / " + fmt(J.stock);
+  document.getElementById("jBar").style.width = pct + "%";
+  const msg = document.getElementById("jMsg");
+  if (cost >= J.stock){
+    msg.textContent = "已達標　超出 $" + fmt(cost - J.stock) + "，這些也一起帶回家";
+    msg.className = "msg ok";
+  } else {
+    msg.textContent = "還可以再挑 $" + fmt(J.stock - cost) + " 的貨，湊滿門檻不浪費";
+    msg.className = "msg";
+  }
+
+  jShipBox.paint();
+  const goods = Math.max(cost, J.stock) + J.kit;
+  const pay = goods + (cost > 0 ? jShip : 0);
+  document.getElementById("jRetail").textContent = "$" + fmt(retail);
+  document.getElementById("jVip").textContent    = "$" + fmt(vip);
+  document.getElementById("jCost").textContent   = "$" + fmt(cost);
+  document.getElementById("jKit").textContent    = "$" + fmt(J.kit);
+
+
+  const num = document.getElementById("jNum");
+  num.innerHTML = '<i>$</i>' + fmt(cost > 0 ? pay : 0);
+  num.disabled = cost === 0;
+  document.getElementById("jLab").textContent = n ? "加盟總金額 · 共 " + n + " 件" : "加盟總金額";
+  document.getElementById("jTap").textContent = cost > 0 ? "點金額複製" : "先挑貨";
+  document.getElementById("jSave").hidden = cost === 0;
+  document.getElementById("jS1").textContent = "$" + fmt(Math.max(0, vip - cost));
+  document.getElementById("jS2").textContent = "$" + fmt(Math.max(0, retail - cost));
+  document.getElementById("jCopy").disabled = cost === 0;
+  document.getElementById("jReset").disabled = cost === 0;
+  document.getElementById("jNote").textContent =
+    J.name + "：首次備貨 $" + fmt(J.stock) + " ＋ 創業包 $" + fmt(J.kit) +
+    " ＝ $" + fmt(J.stock + J.kit) + "。後續需" + J.refill +
+    "。省下的金額以同一批貨的 VIP 價與消費者零售價為比較基準。";
+  return {cost, vip, retail, pay, goods};
+}
+
+document.getElementById("jNum").onclick = () => {
+  const {cost, pay} = renderJ();
+  if (cost) copy(String(pay), "已複製 " + fmt(pay));
+};
+document.getElementById("jReset").onclick = () => {
+  Object.keys(jQty).forEach(k => jQty[k] = 0);
+  jShip = 0;
+  renderJ();
+};
+document.getElementById("jCopy").onclick = () => {
+  const r = renderJ();
+  if (!r.cost) return;
+  const J = JOIN[jSel];
+  const nick = document.getElementById("jNick").value.trim() || "寶寶";
+  const bar = "━━━━━━━━━━━━━━━━";
+  const thin = "──────────────";
+  const save = Math.max(0, r.retail - r.pay);
+  const L = [];
+
+  L.push("🎁 加盟" + J.name + "｜$" + fmt(J.stock + J.kit));
+  L.push(nick + "～你選的商品幫你配好囉 ♡");
+  L.push("原商品價值｜$" + fmt(r.retail));
+  L.push(bar);
+  L.push("✨ 這次只需要｜$" + fmt(r.pay));
+  L.push(bar);
+  L.push("等於直接省下 $" + fmt(save) + " ♡");
+  L.push("（含創業包 $" + fmt(J.kit) + (jShip > 0 ? "、運費 $" + fmt(jShip) : "") + "）");
+  L.push("【 備 貨 內 容 】");
+
+  const blocks = [];
+  const singles = jPicked();
+  if (singles.length){
+    blocks.push(singles.map(({p,q}) => p.n + " × " + q));
+  }
+  blocks.forEach((b,i) => {
+    if (i) L.push(thin);
+    b.forEach(x => L.push(x));
+  });
+
+  L.push(bar);
+  L.push("原價 $" + fmt(r.retail) + " → 加盟 $" + fmt(r.pay));
+  L.push("現省 $" + fmt(save));
+  L.push(bar);
+
+  copy(L.join("\n"), "試算已複製");
+};
+
+/* ---- 補貨時間 ---- */
+const RESTOCK = [
+  { name:"實習加盟", amt:6000 },
+  { name:"三級加盟", amt:12000 }
+];
+let rSel = 0;
+const rDate = document.getElementById("rDate");
+rDate.value = new Date().toLocaleDateString("sv-SE");
+rDate.onchange = renderR;
+
+const rLevelsEl = document.getElementById("rLevels");
+RESTOCK.forEach((r,i) => {
+  const b = document.createElement("button");
+  b.className = "level";
+  b.innerHTML = r.name + '<br><small style="font-weight:400;font-size:12.5px;opacity:.75">補貨 $' +
+                fmt(r.amt) + '</small>';
+  b.setAttribute("aria-pressed", i === 0);
+  b.onclick = () => { rSel = i; renderR(); };
+  rLevelsEl.appendChild(b);
+});
+
+function restockCalc(){
+  const v = rDate.value;
+  if (!v) return null;
+  const [Y,M,D] = v.split("-").map(Number);
+  const mLabel = k => new Date(Y, M - 1 + k, 1).getMonth() + 1 + "月";
+  const end = new Date(Y, M + 4, 0);
+  const pad = n => String(n).padStart(2,"0");
+  return {
+    join: Y + "/" + pad(M) + "/" + pad(D),
+    honey: [mLabel(0), mLabel(1), mLabel(2)],
+    win: [mLabel(3), mLabel(4)],
+    due: end.getFullYear() + "/" + pad(end.getMonth()+1) + "/" + pad(end.getDate()),
+    amt: RESTOCK[rSel].amt,
+    name: RESTOCK[rSel].name
+  };
+}
+
+function renderR(){
+  [...rLevelsEl.children].forEach((b,i) => b.setAttribute("aria-pressed", i === rSel));
+  const r = restockCalc();
+  const out = document.getElementById("rOut");
+  if (!r){ out.innerHTML = '<div class="l"><span>請先選加盟日期</span><b>－</b></div>'; return; }
+  out.innerHTML =
+    '<div class="l"><span>蜜月期（不用補貨）</span><b>' + r.honey.join("、") + '</b></div>' +
+    '<div class="l"><span>補貨期間</span><b>' + r.win.join("、") + '</b></div>' +
+    '<div class="l hi"><span>補貨截止</span><b>' + r.due + '</b></div>' +
+    '<div class="l"><span>要補到</span><b>$' + fmt(r.amt) + '</b></div>';
+}
+document.getElementById("rCopy").onclick = () => {
+  const r = restockCalc();
+  if (!r) return;
+  const L = [];
+  L.push("🌝 寶寶的補貨時間");
+  L.push("");
+  L.push("加盟日：" + r.join);
+  L.push("級別：" + r.name);
+  L.push("");
+  L.push("🍯 蜜月期｜" + r.honey.join("、"));
+  L.push("這三個月都不算，不用補貨");
+  L.push("等於多賺到一個月！");
+  L.push("");
+  L.push("💰 補貨期間｜" + r.win.join("、"));
+  L.push("要在 " + r.due + " 前補到 $" + fmt(r.amt));
+  L.push("（補貨額可以累積喔）");
+  copy(L.join("\n"), "已複製補貨時間");
+};
+renderR();
+
+/* ---- 新人流程話術 ---- */
+const PRODS = [
+ { hide:1, t:"🌿 纖體組｜整組介紹", x:`🌿 中秋纖體組
+
+纖纖飲 × 2盒
+纖飄錠 × 1盒
+🎁 贈 纖酵宿正貨 × 1盒
+
+━━━━━━━━━━
+🍃 纖纖飲（小綠）
+━━━━━━━━━━
+很多人熱量爆掉
+其實是澱粉吃太多🥲
+
+尤其外食族
+很容易攝取過多精緻澱粉
+
+小綠主要幫助：
+
+✔ 降低澱粉吸收
+✔ 控制餐後血糖
+✔ 減少脂肪囤積
+✔ 幫助體重管理
+
+很適合：
+
+▪️ 愛吃飯麵甜食
+▪️ 外食族
+▪️ 餐後容易睏
+▪️ 熱量容易超標的人
+
+━━━━━━━━━━
+🍃 纖飄錠
+━━━━━━━━━━
+-不易形成體脂肪
+-減少脂肪吸收
+-提高17%新陳代謝 (加速脂肪燃燒)
+-降血脂,體脂
+-降低壞膽固醇
+-降低三酸甘油脂
+-穩定血糖,血壓
+-減少內臟脂肪生成
+
+━━━━━━━━━━
+🌿 纖酵宿（贈品）
+━━━━━━━━━━
+很多時候肚子大
+不一定是胖
+
+可能是腸道不順🥺
+
+尤其便秘、排便不順
+整個人都會脹脹悶悶的
+
+纖酵宿主要幫助：
+
+✔ 維持消化機能
+✔ 改善排便順暢
+✔ 增加好菌環境
+✔ 減少腹脹不適
+
+很適合：
+
+▪️ 便秘
+▪️ 腸道消化差
+▪️ 蔬果吃太少
+▪️ 排便不規律的人` },
+
+ { t:"🍃 纖纖飲（小綠）", x:`🍃 06｜纖纖飲（小綠）
+
+很多人熱量爆掉
+其實是澱粉吃太多🥲
+
+尤其外食族
+很容易攝取過多精緻澱粉
+
+小綠主要幫助：
+
+✔ 降低澱粉吸收
+✔ 控制餐後血糖
+✔ 減少脂肪囤積
+✔ 幫助體重管理
+
+很適合：
+
+▪️ 愛吃飯麵甜食
+▪️ 外食族
+▪️ 餐後容易睏
+▪️ 熱量容易超標的人` },
+
+ { t:"🍃 纖飄錠", x:`🍃纖飄錠可以幫助你
+
+-不易形成體脂肪
+-減少脂肪吸收
+-提高17%新陳代謝 (加速脂肪燃燒)
+-降血脂,體脂
+-降低壞膽固醇
+-降低三酸甘油脂
+-穩定血糖,血壓
+-減少內臟脂肪生成` },
+
+ { t:"🌿 纖酵宿", x:`🌿 04｜纖酵宿
+
+很多時候肚子大
+不一定是胖
+
+可能是腸道不順🥺
+
+尤其便秘、排便不順
+整個人都會脹脹悶悶的
+
+纖酵宿主要幫助：
+
+✔ 維持消化機能
+✔ 改善排便順暢
+✔ 增加好菌環境
+✔ 減少腹脹不適
+
+很適合：
+
+▪️ 便秘
+▪️ 腸道消化差
+▪️ 蔬果吃太少
+▪️ 排便不規律的人` },
+
+
+ { hide:1, t:"✨ 美肌組｜整組介紹", x:`✨ 中秋美肌組
+
+水光錠 × 2盒
+水光繃帶面膜 × 1盒
+🎁 贈 小白瓶身體精華油
+
+━━━━━━━━━━
+爆水養膚大滿貫｜三強聯手
+━━━━━━━━━━
+
+01 內在調理｜水光錠
+由內改善痘痘粉刺，打造乾淨透亮肌
+・調節皮脂分泌，減少出油
+・幫助代謝老廢角質，預防粉刺生成
+・改善痘痘體質，穩定膚況
+・提升肌膚修復力，養出平滑細緻肌
+
+02 急救修護｜水光繃帶面膜
+快速舒緩痘痘泛紅，修護受損肌膚
+・鎮定舒緩痘痘紅腫
+・深入補水，改善因出油造成的乾燥脫皮
+・調理油水平衡，減少粉刺生成
+・修護肌膚屏障，加速痘痘後的肌膚恢復
+
+03 鎖水防護｜小白瓶
+強化肌膚屏障，預防痘痘粉刺反覆
+・平衡油脂分泌，減少粉刺生成
+・深入保濕，維持肌膚水油平衡
+・舒緩肌膚不適，穩定膚況
+・修護肌膚屏障，提升肌膚防禦力
+
+內調理 × 外急救 × 強防護
+養出乾淨透亮的無瑕肌！` },
+
+ { t:"💧 水光錠｜產品介紹", x:`✨ 水光錠
+
+【產品特色】
+・日本KEWPIE原廠認證足量添加（足量＝有效）
+・擁有28項專利認證書
+・不含賀爾蒙，孕婦安心使用
+・Hyabest玻尿酸純度高達99.99%
+・膠囊劑型 無腥味
+
+【優勢】
+・效果更勝膠原蛋白，免挨針就能有醫美的效果
+・99.99%高純度口服玻尿酸，全身有感
+・專利膠原蛋白PO·OG胜肽，完整吸收，不被胃酸破壞
+・黃杞葉具日本7大功效專利，有效改善粉刺、痘痘、異位性皮膚炎
+・有機藻紅素抗氧化力為維他命C的6000倍，從內而外美白
+・口服內外保養全身性調理
+
+【效益】
+・改善痘痘、暗沉、乾燥、粗糙、泛紅等問題
+・改善孕期肌膚粗糙／孕斑／黑色素沉澱
+・有效抗老化，讓肌膚維持年輕狀態
+・改善快速減重族群產生的凹、垂、乾等問題
+
+【三層養膚原理】
+1️⃣ 膠原蛋白（支撐）：相當於房子的鋼筋
+2️⃣ 玻尿酸（吸水）：相當於水泥
+3️⃣ 賽洛美（鎖水）：相當於防水層` },
+
+ { t:"💧 水光錠｜怎麼吃＋注意事項", x:`✨ 水光錠
+
+一般吃法：早晚各食用1顆
+加強吃法：早晚各食用2顆
+
+💕全族群皆適合食用，包含孕婦、哺乳媽咪
+💕月經來、打完雷射、整形後皆可食用水光錠，是肌膚修復補水聖品，增強肌膚抵抗力
+
+⚠️水光錠因可以在30分鐘內快速被吸收，有的人體質比較敏感在快速新陳代謝過程中會有感到微微癢癢的流動感，都屬正常現象呦，可以多喝水之外，也能塗抹一些舒緩的乳液，避免皮膚過於乾癢
+
+⚠️多喝水效果更好，建議每日飲水1500cc以上` },
+
+ { t:"🧖 水光繃帶面膜｜厲害成分", x:`✨水光繃帶面膜有什麼厲害成分？
+
+👉🏻繃帶普拉斯™
+法國120年神級乳霜活性成分，刺激膠原增生、拉緊輪廓線，等同音波拉提效果
+
+👉🏻水光玻尿酸
+7種玻尿酸綜合體，滲入真皮層，層層發揮作用，含醫美注射級玻尿酸，填補凹陷，效果等同水光針
+
+👉🏻尿囊素
+痘痘藥膏成分，緩解痘痘粉刺、減少發炎
+
+👉🏻法國修復神草
+3分鐘快速鎮定退紅，增強肌膚防禦抵抗力
+
+👉🏻維他命E
+自由基吸塵器，有效清除3C、紫外線、壓力造成的自由基
+
+👰🏻‍♀️適用族群
+👉🏻生活忙碌懶惰保養
+👉🏻老化皮膚
+👉🏻暗沈皮膚
+👉🏻容易長斑的皮膚
+👉🏻術後肌膚
+
+各種膚質皆可安心使用！
+*建議：敏感肌／酒糟肌／特殊膚質請先測試於耳後及手腕` },
+
+ { t:"🧖 水光繃帶面膜｜各膚質怎麼敷", x:`水光繃帶面膜各膚質如何使用？
+
+【混合肌＆中性肌】
+一般保養：一週1~2次
+加強保養：可每天敷
+
+【乾肌】
+一般保養：一週2~4次
+加強保養：可每天敷
+
+【敏感肌】
+一般保養：一週2~3次
+加強保養：可每天敷
+
+【油肌】
+一般保養：一週1次
+*不需天天敷*
+
+【酒糟肌＆痘痘肌】
+一般保養：一週1~2次
+*不需天天敷*` },
+
+ { t:"🤍 小白瓶｜產品介紹", x:`🤍 急救小白瓶
+
+▪️香味是？
+來自法國百年調香世家的頂級香氛，花香中帶點果香，高貴優雅。歐盟安全認證26項無過敏原檢測，可安心使用。
+
+【產品特色】
+・12種西班牙植物油
+・從臉到全身上下都可以擦
+・11大無添加
+・使用四種速效成份
+・國際大廠指定使用成分，幫助改善肌膚敏感
+
+【優勢】
+・法國百年調香世家香氛
+・All in one 改善肌膚問題
+・孕哺乳皆可使用
+・一天有感四天有效
+・醫美術後也能使用
+
+【效益】
+・保濕、緊緻
+・消除水腫
+・改善橘皮、肥胖紋、妊娠紋
+・改善瘦身、產後鬆弛肌膚
+・醫美術後加強修復
+・改善頭髮粗糙毛躁` }
+,
+
+ { t:"💗 爆纖錠（小粉）", x:`爆纖錠(小粉)
+
+-專利荔枝綠茶多酚
+-高效率燃燒皮下及腹部脂肪
+-加速代謝迅速燃脂
+-紅豆種皮萃取有效
+🦵消水腫瘦大腿
+
+✨爆纖錠✨適用對象
+
+- 減肥停滯期
+- 孕哺乳媽咪
+- 體質虛寒容易四肢發冷者
+- 經痛、婦科問題
+- 容易水腫
+- 常熬夜精神不佳
+- 臉色蠟黃暗沈者` }
+];
+
+const SHORTS = [
+ { t:"💧 水光錠 超殺文字", w:"這是限動專用文字，不可放精選、貼文、賣場及 Reels。", x:`💧 水光錠
+
+1 日本 KEWPIE 原廠認證足量添加！
+2 口服玻尿酸效果更勝膠原蛋白，免挨針就能有醫美的效果！
+3 有效改善孕期肌膚粗糙、孕斑與黑色素沉澱。
+4 自己、家人、客人真實認證，整形外科權威醫師大推！
+5 擁有 28 項專利認證書，口服內外保養全身性調理。
+6 膠原蛋白 PO·OG 分子量更小，吸收率更高，不被胃酸破壞。
+7 有效抗老化、補充澎潤度，讓肌膚維持年輕狀態。
+8 連續七年榮獲世界品質標章金獎肯定！
+9 不含賀爾蒙，孕婦與敏弱肌都可以安心食用。
+10 改善快速減重族群產生的凹、垂、乾等問題。
+11 改善乾燥、粗糙、泛紅、痘痘與暗沉等膚況問題。
+12 榮獲 2025、2024 及 2021 國家品牌玉山獎與女大粉美賞。
+13 Hyabest 玻尿酸純度高達 99.99%，植物膠囊劑型無腥味。
+14 日本 7 大專利黃杞葉抑痘，有機藻紅素抗氧化力為維他命 C 的 6000 倍！
+15 由內而外美白，讓肌膚恢復水潤、彈亮與細緻光澤。
+16 藝人明星代言，女人我最大、ELLE 等國際時尚雜誌大推！` },
+
+ { t:"🧖 水光繃帶面膜 超殺文字", w:"這是限動專用文字，不可放精選、貼文、賣場及 Reels。", x:`🧖 水光繃帶面膜
+
+1 繃帶普拉斯 法國頂級成分，緊實拉提效果超好！
+2 全方位 All in one 功效，一張達到拉提＋水光針雙重效果。
+3 深層滲透真皮層，一片保濕效果持續 48 小時以上！
+4 榮獲 2024 國家品牌玉山獎全國首獎，受邀進總統府表揚。
+5 水光玻尿酸級無侵入性保養，省下高額醫美療程費用。
+6 七種玻尿酸黃金配方，從表皮高壓滲透直達真皮層。
+7 含有痘痘調理劑，能有效舒緩痘痘粉刺、減少發炎。
+8 連續兩年榮獲玉山獎、連續四年榮獲世界品質標章金獎！
+9 添加法國要點有機白夏菊修復神草，3 分鐘快速鎮定退紅。
+10 天絲材質親敷貼合，擁有 18 倍精華吸附力高壓滲透。
+11 獨特抗老成分，緊緻毛孔、拉提撫平輪廓線。
+12 榮獲 2025 最高品質鑽石金獎，五位皮膚科醫生評鑑認可！
+13 法國百年調香世家紅茶療癒香氛，敷面膜同時放鬆身心。
+14 全方位增強肌膚防禦力，清除藍光與環境自由基傷害。
+15 彈潤保濕、改善乾燥暗沉，恢復肌膚健康爆水光澤。
+16 通過高精密儀器與 SGS 貼膚測試，雷射術後與孕婦皆可安心敷！` },
+
+ { t:"🤍 小白瓶 超殺文字", w:"這是限動專用文字，不可放精選、貼文、賣場及 Reels。", x:`🤍 急救小白瓶
+
+★一瓶多用，預防及改善孕媽咪妊娠紋問題！緊緻產後鬆弛的皮膚
+★按摩可以消除水腫！改善橘皮問題！按完腿可以細一圈！
+★修復效果超強！淡化紋路很有感！天然植萃消炎抗菌成分！舒緩超有感
+★12種西班牙頂級植物油，強化修補肌膚屏障！抗氧化抗老化！
+★法國百年調香世家的香氛！舒服療癒的味道！吸收快速不黏膩
+★全身上下都可以使用！頭髮、臉、身體、手及腳！甚至醫美術後及除毛後都可
+★一瓶多用可以讓全身Q彈滑嫩！避免乾燥甚至起屑，做氛圍感美女
+★乾肌的神器！一滴上臉，皮膚光澤又保濕！不用疊加很多瓶瓶罐罐
+★頭髮毛躁抹一點，氛圍感美女，頭髮自帶香氣又柔順` },
+
+ { t:"💧 水光錠 起承轉合", w:"這是限動專用文字，不可放精選、貼文、賣場及 Reels。", x:`💧 水光錠｜限動成交版
+
+【起｜勾出痛點】
+1 為什麼保濕擦再多還是乾？
+2 為什麼瘦下來臉看起來很凹？
+3 為什麼天天熬夜氣色這麼黃？
+4 為什麼換季肌膚總是發紅起屑？
+5 只靠外擦保養，真的補得到底層嗎？
+
+【承｜分享故事】
+1 我以前也是保濕狂擦卻沒用。
+2 試過好多方法，臉還是很乾癟。
+3 花了很多錢買保養品都沒改善。
+4 減重瘦下來，結果朋友說我變老了。
+5 我一直以為是外擦保養品不夠貴。
+
+【轉｜提供價值】
+1 後來才知道體內缺水外擦沒用。
+2 膠原蛋白跟玻尿酸要從裡面補。
+3 口服玻尿酸效果更勝膠原蛋白。
+4 補足底層養分，氣色自然發光。
+5 內服外調，保養才會真正有感。
+
+【合｜自然成交】
+1 我現在每天固定補充兩顆。
+2 有一樣乾癟蠟黃困擾的人參考看看。
+3 如果不知道怎麼搭配內服保養。
+4 我可以分享我的保養方式給你。
+5 我可以依照你的膚況給你建議。` },
+
+ { t:"🧖 水光繃帶面膜 起承轉合", w:"這是限動專用文字，不可放精選、貼文、賣場及 Reels。", x:`🧖 水光繃帶面膜｜限動成交版
+
+【起｜勾出痛點】
+1 為什麼換季皮膚動不動就發紅？
+2 為什麼化妝總是卡粉又大浮粉？
+3 為什麼大顆悶痘常常消不掉？
+4 為什麼敷完面膜很快又乾掉了？
+5 普通面膜，真的能救急問題肌嗎？
+
+【承｜分享故事】
+1 我以前換季臉也是紅腫發癢。
+2 重要約會前一天上妝都很斑駁。
+3 買過很多開架面膜，敷了都刺痛。
+4 花好多時間敷臉，效果卻只有半小時。
+5 我一直以為自己的皮膚沒救了。
+
+【轉｜提供價值】
+1 後來才知道受損肌需要專櫃級護理。
+2 繃帶成分 3 分鐘快速鎮定退紅。
+3 天絲布膜緊密貼合，有效成份滲透肌底。
+4 一片保濕續航力可以維持 48 小時。
+5 選對急救修護，比天天亂敷更有效。
+
+【合｜自然成交】
+1 我現在每週固定敷它急救。
+2 有換季泛紅卡粉困擾的人參考看看。
+3 如果想知道怎麼敷出貼妝爆水肌。
+4 我可以分享我的急救招式給你。
+5 我可以依照你的膚況給你看搭配。` },
+
+ { t:"🤍 小白瓶 起承轉合", w:"這是限動專用文字，不可放精選、貼文、賣場及 Reels。", x:`🤍 小白瓶｜限動成交版
+
+【起｜勾出痛點】
+1 為什麼身體擦了乳液還是乾裂？
+2 為什麼瘦下來皮膚看起來很鬆？
+3 為什麼產後肚子留下一條條紋路？
+4 為什麼保養油擦起來都黏黏的？
+5 瓶瓶罐罐，保養一定要這麼麻煩嗎？
+
+【承｜分享故事】
+1 我以前也很怕保養油會黏衣服。
+2 試過好多身體乳，到了下午還是乾。
+3 瘦下來後很擔心橘皮跟鬆弛問題。
+4 浴室放滿瓶瓶罐罐，常常放過期。
+5 我以為保養就是要花很多時間。
+
+【轉｜提供價值】
+1 後來才知道肌膚極度缺油脂鎖水。
+2 12種西班牙植萃油吸收超快速。
+3 All in one 從頭到腳一瓶直接搞定。
+4 搭配按摩能緊緻體態、順便消水腫。
+5 鎖水做好，肌膚才能真正滑嫩。
+
+【合｜自然成交】
+1 我現在洗完澡全身上下都擦它。
+2 有乾燥鬆弛、紋路困擾的人參考看看。
+3 如果不知道這瓶有多種用法。
+4 我可以分享我的全身保養法給你。
+5 我可以依照你的需求給你建議。` }
+];
+
+const SALES = [
+ { hide:1, t:"📋 美肌組合銷售 SOP", x:`美肌組合銷售 SOP
+
+1️⃣ 對照圖卡，精準定位痛點
+・開啟「不同客人如何搭配」照片，找到顧客對應的膚質框框（敏弱肌／混合肌／乾肌／油痘肌）
+・打出框框內的「痛點文字」，讓客人產生「你懂我困擾」的強烈共鳴
+👉 先戳中她的問題，讓她覺得你真的懂她
+
+2️⃣ 打包系統，說明組合必要性
+單品只能救急，組合才能根本養膚
+從內到外，同時補水、修護、鎖水，才能真正改善膚況、維持穩定
+・水光錠（內服）：從底層補充水分與膠原蛋白，調理油水平衡與支撐肌膚彈性
+・水光繃帶面膜（外修）：表層急救修護，3 分鐘快速鎮定退紅、極致補水
+👉 內外兼顧，效果加乘，讓肌膚從根本變穩定
+
+3️⃣ 鎖定活動贈品，放大組合價值
+活動限定贈送正貨產品
+建立「補水 → 修護 → 鎖水」才能真閉環，讓效果更持久
+・小白瓶（鎖水）：為剛補完水的皮膚增加「鎖水保護膜」，防止水分蒸發，順便拉提
+👉 組合搭配贈品，價值更完整，效果更長久
+
+4️⃣ VIP 價格結算，順理成章收單
+・用「精打細算」的角度購買組合，加購其他產品直接升級 VIP 優惠價
+・告訴客人現在入手最划算，不僅能解決當下膚況，還能同時兼顧其他保養需求，省下更多費用
+👉 把握活動＋VIP 優惠，現在就是最好的入手時機` },
+
+ { t:"🛡 抗拒點1｜家裡還有別的沒用完", x:`❓客人：我家裡還有別的膠原蛋白／面膜沒用完。
+
+🧠 真實背後原因
+怕囤貨浪費、覺得產品重複、沒看到產品跟其他競品的差異。
+
+❌ 錯誤接法
+「好吧，那你用完再來找我買！」（等對方用完早就忘記你了）
+
+✅ 正確對話範例（認同對方 ➡ 創造新價值）
+
+哇！其實你本來就有在吃膠原保養，代表你真的很有養膚觀念耶！超棒!!👍
+我可以好奇問一下，你現在吃的這款，擦完或吃完有達到你想要的「改善痘痘跟蠟黃」效果嗎？還是覺得遇到了停滯期？
+
+（客人：就順順的吃啦，好像也沒特別有感覺，想說先把它吃完。）
+
+其實很多人跟你一樣!因為膠原蛋白還要搭配玻尿酸效果才會更好
+水光錠不只有膠原蛋白還有日本玻尿酸，從肌膚飽水到彈性支撐雙重養護
+你不用把原本的丟掉可以送給家人吃，把水光錠當「內在底層打底」
+它還能幫你把原本擦的保養品吸收率放大2~3倍，完全不浪費!
+既然都要保養，用對搭配讓效果翻倍不是更好嗎？` },
+
+ { hide:1, t:"🛡 抗拒點2｜有點貴，我考慮一下", x:`❓客人：這組合有點貴耶，我考慮一下。
+
+🧠 真實背後原因
+價值感不足（覺得不值這個價）、對效果沒信心，或是被一次性的總價嚇到。
+
+❌ 錯誤接法
+「好，那你有需要再跟我說喔！」（直接被放生）
+
+✅ 正確對話範例（好奇追問 ➡ 拆解價值）
+
+寶，沒問題～考慮很正常！
+不過因為想幫你精打細算，我可以好奇問一下，
+你主要猶豫的是「預算考量」，還是其他什麼原因嗎？
+
+（客人：就覺得一次買水光錠跟面膜，3000多有點花不下去……）
+
+完全懂! 一下子看到總價真的會猶豫!
+但活動送的正貨產品真的超划算! 無效才是最貴，一組可以用2~4個月
+加上你一直在用的婕肌零剛好幫你直接升級 VIP 價。
+算下來一天只要幾十塊，就能把內服補水、外在急救跟鎖水一次做對!
+比起之後花幾萬塊去醫美試錯，這樣搭配反而是最划算、回報率最高的保養。
+如果分開買後面反而多花冤枉錢，趁這次有 VIP 活動最划算了！` },
+
+ { t:"🛡 抗拒點3｜我很懶，怕沒時間擦", x:`❓客人：我平時很懶，買回去怕沒時間擦。
+
+🧠 真實背後原因
+害怕步驟多、覺得自己無法堅持、怕買了就放著。
+
+❌ 錯誤接法
+「不會啦，這很簡單啦！」（沒有說明到底有多簡單）
+
+✅ 正確對話範例（減輕負擔 ➡ 給予極簡提案）
+
+寶，你真的講到重點了！現在大家工作這麼忙，
+如果保養像在上工一樣要擦十幾瓶，真的連我都懶😅！
+你平時保養大概都花幾分鐘呀？最討厭哪一個步驟？
+
+（客人：我洗完澡只想躺平，根本沒空塗塗抹抹。）
+
+寶！那我更要跟你分享了，因為它就是專門為「懶人極致養膚」設計的！
+每天早上吞兩顆水光錠只要3秒鐘；雪聚露上完後，
+全身擦一瓶小白瓶1分鐘搞定鎖水，連乳液跟髮油都省了！
+一週只要選兩天敷15分鐘繃帶面膜急救。
+完全不佔時間，躺著就能輕鬆變漂亮，這樣保養是不是超級快!?` }
+];
+
+const TMPLS = [
+ { hide:1, t:"⚠️ 老客戶私訊（中秋活動）",
+   w:"只能一對一私訊給「曾經跟你買過產品」的客人。不可以公開貼文、限動或群發，否則會違規。",
+   x:`午安 XX ♡
+中秋活動出來啦～
+
+想到你之前有跟我買過產品
+這次活動真的很划算，所以特別先私訊跟你說 🤍
+
+━━━━━━━━━━━━━━
+🌿 纖體組｜$3,480
+━━━━━━━━━━━━━━
+纖纖飲 × 2盒
+纖飄錠 × 1盒
+🎁 贈 纖酵素正貨 × 1盒
+
+━━━━━━━━━━━━━━
+✨ 美肌組｜$3,070
+━━━━━━━━━━━━━━
+水光錠 × 2盒
+面膜 × 1盒
+🎁 贈 小白瓶身體精華油 × 1
+
+這次我覺得最值得的是
+如果你本來就有固定在吃／用
+其實可以直接用「加盟成本價」買更省
+
+其實加入的門檻沒有想像中高
+實習 $6,600 備貨＋$200 創業包
+就可以用加盟成本價帶產品
+（想一次到位的話，三級是 $19,600＋$200）
+
+之後自己補貨也都是成本價 ♡
+
+如果你有想補貨
+我可以直接幫你算
+「單買活動組」跟「這次直接加入」
+哪一個對你最省，再決定就好 🤍` },
+
+ { t:"① 快速認識（初次聊）", x:`寶也幫我填寫一下下這個 
+讓我了解你一下💕
+
+
+1怎麼稱呼
+
+2. 目前自用還是要經營
+
+
+3.怎麼找到我的？
+
+
+4.想加盟的原因？` },
+
+ { t:"② 完整了解表（想經營的）", x:`寶幫我填一下這個表格😚💕讓我多了解你
+
+
+稱呼：
+星座：
+
+
+① 【關於寶寶的現況】
+目前的年紀 / 職業，以及目前的收入狀況大概是如何呢？
+平常有在使用哪些社群平台（IG/FB/TikTok/小紅書）？之前有做過網拍經營的經驗嗎？
+
+
+② 【關於產品的體驗】
+有吃過婕樂纖哪些產品呢？使用後有什麼改變或感受？
+
+（如果還沒吃過也可以直接跟我說喔！）
+
+③ 【關於加盟的起心動念】
+想單純自用越吃越便宜，還是也想一起經營賺錢呢？
+做這份事業，最想讓目前的自己「改變什麼」？還有為什麼會想選擇找我加盟呢？🥰
+
+
+④ 【關於目標與時間投入】
+寶寶加入的目標是什麼？（例如：每個月想多賺多少錢、想買什麼、想改變體態等）
+妳一天願意付出多少時間經營及學習呢？
+(Ex: 上線上銷售課、紀錄自己體態/皮膚變化、學製圖、學版面經營)
+
+
+⑤ 【真心話時間】
+目前最想了解，或者是妳「最擔心的 3 個問題」是什麼？
+（不用有壓力，有什麼疑慮都可以放心寫下來交給我處理🤎）` },
+
+ { t:"③ 級別與補貨額說明", x:`成本不同喔～～ 三級成本再更低
+
+不管哪一個級別
+每兩個月有補貨額（可以累積）
+
+實習補貨金額💰$6000
+三級補貨金額💰$12000` },
+
+ { t:"④ 加盟流程進度", x:`🌝新加盟商進度
+
+以下進度不用擔心🤍
+完整流程約一週即可順利完成
+我也會陪著寶寶一起喔！
+其實很簡單的！
+
+
+加盟流程 ：
+
+❶
+選實習 👉🏻匯款 $6600+200 創業包
+選三級👉🏻匯款$19600+200創業包
+
+
+❷協助註冊雲端APP/報名新人訓課程(LINE)
+
+❸⚡️公司三方群組協助簽署合約(LINE)
+❹⚡️上完新人訓並完成考試(LINE)
+
+經營
+❺⚡️有授權書後加入群組
+
+
+⚡️微信系統填寫
+⚡️寄回兩本零售契約書
+⚡️上完新人訓並完成考試(LINE)
+⚡️收到授權書(微信)` },
+
+ { t:"⑤ 新人訓是什麼", x:`🏷️新人訓是什麼？
+
+讓寶能夠更了解公司的理念、創辦人的理念、產品怎麼研發、進來能做什麼、該做什麼、公司提供什麼，對你能帶來多少好處😘
+
+畢竟要加入一個事業，總是要了解公司是在做什麼的、背景如何，不然以後做起來不安心也不知道是經營什麼樣的一份事業
+
+對於公司的方向及自己經營的方向都會清楚很多，對產品也會更了解，不管是用起來或者要推薦給客人也會更清楚、更放心😍
+
+每一位加盟商剛加入都需要上一次喔
+採用線上視訊上課3.5小時
+大約為在週五、六
+上完課後完成作業🤍
+放心不難的嘿嘿` },
+
+ { t:"⑥ 索取合約書資料", x:`寶寶創業包合約書公司會寄出給你喔！
+再麻煩幫我填寫🤍
+
+新加盟商姓名: 
+新加盟商電話: 
+新加盟商收件地址: 
+新加盟商級別：
+
+建議填寫方便收的地址喔😘
+收到合約書後我會教你怎麼填寫🤍` }
+];
+
+function renderCards(list, boxId){
+  const box = document.getElementById(boxId);
+  list.filter(t => !t.hide).forEach(t => {
+  const el = document.createElement("div");
+  el.className = "tmpl";
+  const head = document.createElement("div");
+  head.className = "tmpl-h";
+  const b = document.createElement("b");
+  b.textContent = t.t;
+  head.appendChild(b);
+  if (t.w){
+    const b2 = document.createElement("button");
+    b2.className = "sec";
+    b2.textContent = "給夥伴";
+    b2.onclick = () => copy(
+      "⚠️ 給夥伴的提醒\n" + t.w + "\n－－－－－－－－\n以下才是貼給客人的內容\n\n" + t.x,
+      "已複製（含提醒）");
+    head.appendChild(b2);
+  }
+  const btn = document.createElement("button");
+  btn.textContent = "複製";
+  btn.onclick = () => copy(t.x, "已複製");
+  head.appendChild(btn);
+  el.appendChild(head);
+  if (t.w){
+    const wn = document.createElement("div");
+    wn.className = "warn";
+    wn.textContent = "⚠️ " + t.w;
+    el.appendChild(wn);
+  }
+  const d = document.createElement("details");
+  const sm = document.createElement("summary");
+  sm.textContent = "看內容";
+  const pre = document.createElement("pre");
+  pre.textContent = t.x;
+  d.appendChild(sm); d.appendChild(pre);
+  el.appendChild(d);
+  box.appendChild(el);
+  });
+}
+renderCards(TMPLS, "tmpls");
+renderCards(PRODS, "prods");
+renderCards(SHORTS, "shorts");
+renderCards(SALES, "sales");
+
+/* ---- 複製 ---- */
+function copy(text, msg){
+  if (navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).then(() => toast(msg)).catch(() => fallback(text, msg));
+  } else fallback(text, msg);
+}
+function fallback(text, msg){
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.style.cssText = "position:fixed;top:0;left:0;opacity:0";
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand("copy"); toast(msg); }
+  catch(e){ toast("複製失敗，請長按文字手動選取"); }
+  ta.remove();
+}
+let tm;
+function toast(msg){
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.classList.add("on");
+  clearTimeout(tm);
+  tm = setTimeout(() => el.classList.remove("on"), 1500);
+}
+
+renderC();
+renderT();
+renderJ();
+</script>
+</body>
+</html>
