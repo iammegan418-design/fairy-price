@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>2026 中秋組合</title>
+<title>仙女價格計算機</title>
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="仙女中秋">
+<meta name="apple-mobile-web-app-title" content="仙女計算機">
 <meta name="theme-color" content="#5F6D78">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -198,8 +198,7 @@ button:focus-visible,summary:focus-visible,input:focus-visible{outline:2.5px sol
 
 <header>
   <div class="brand">仙女團隊</div>
-  <h1>2026 中秋組合 🥮</h1>
-  <div class="dates">活動期間 9/17（四）－ 10/5（一）</div>
+  <h1>仙女價格計算機</h1>
   <div class="themes" id="themes" aria-label="配色"></div>
 </header>
 
@@ -217,10 +216,7 @@ button:focus-visible,summary:focus-visible,input:focus-visible{outline:2.5px sol
     <input id="nickname" value="寶寶" maxlength="12" autocomplete="off">
   </div>
 
-  <div class="sect">中秋組合</div>
-  <div id="combos"></div>
-
-  <div class="sect">加購商品 <span>· 直接用 VIP 價</span></div>
+  <div class="sect">選商品 <span>· 自動套用優惠／VIP 價</span></div>
   <div class="tierbar" id="cTier"></div>
   <div id="addons"></div>
 
@@ -230,7 +226,7 @@ button:focus-visible,summary:focus-visible,input:focus-visible{outline:2.5px sol
   <div class="total">
     <div class="lab" id="cLab">應付總金額</div>
     <button class="num" id="cNum"><i>$</i>0</button>
-    <div class="tap" id="cTap">先選組合</div>
+    <div class="tap" id="cTap">先選商品</div>
     <div class="saveline" id="cSave" hidden>
       <span>商品原價共 <span id="cOrig">$0</span></span>
       <span>省下 <b id="cDiff">$0</b></span>
@@ -257,13 +253,7 @@ button:focus-visible,summary:focus-visible,input:focus-visible{outline:2.5px sol
   <div class="sect">加盟級別</div>
   <div class="levels" id="levels"></div>
 
-  <div class="sect">客人買一組，你賺多少</div>
-  <div id="earns"></div>
-
-  <div class="sect">中秋組合叫貨</div>
-  <div id="rows"></div>
-
-  <div class="sect">單品叫貨 <span>· 顯示你的進貨成本</span></div>
+  <div class="sect">叫貨商品 <span>· 顯示你的進貨成本與利潤</span></div>
   <div id="orderAddons"></div>
 
   <div class="sect">運費</div>
@@ -274,7 +264,7 @@ button:focus-visible,summary:focus-visible,input:focus-visible{outline:2.5px sol
     <button class="num" id="tNum"><i>$</i>0</button>
     <div class="tap" id="tTap">先選數量</div>
     <div class="saveline" id="tSave" hidden>
-      <span>組合 <span id="tCsum">$0</span>　單品 <span id="tSsum">$0</span></span>
+      <span>商品合計 <span id="tSsum">$0</span></span>
       <span>預估可賺 <b id="tEsum">$0</b></span>
     </div>
   </div>
@@ -283,7 +273,7 @@ button:focus-visible,summary:focus-visible,input:focus-visible{outline:2.5px sol
     <button class="act main" id="tCopy" disabled>複製叫貨單</button>
     <button class="act" id="tReset" disabled>清空</button>
   </div>
-  <p class="note" style="margin-top:14px">預估可賺＝組合以活動優惠價、單品以消費者零售價計算。DM 未列入。創業包成本 $200，各級別相同。</p>
+  <p class="note" style="margin-top:14px">預估可賺＝消費者零售價減去你的進貨成本。DM 未列入。創業包成本 $200，各級別相同。</p>
 </section>
 
 <!-- ===== 加盟試算 ===== -->
@@ -302,10 +292,7 @@ button:focus-visible,summary:focus-visible,input:focus-visible{outline:2.5px sol
     <div class="msg" id="jMsg"></div>
   </div>
 
-  <div class="sect">中秋活動組合 <span>· 有贈品，算進備貨</span></div>
-  <div id="jCombos"></div>
-
-  <div class="sect">再挑單品湊門檻</div>
+  <div class="sect">挑選備貨商品</div>
   <div id="jPick"></div>
 
   <div class="sect">試算結果</div>
@@ -314,7 +301,6 @@ button:focus-visible,summary:focus-visible,input:focus-visible{outline:2.5px sol
     <div class="l"><span>用 VIP 價買</span><b id="jVip">$0</b></div>
     <div class="l"><span>加盟後成本價</span><b id="jCost">$0</b></div>
     <div class="l"><span>創業包</span><b id="jKit">$200</b></div>
-    <div class="l hi" id="jGiftRow" hidden><span>另含贈品</span><b id="jGift">－</b></div>
   </div>
 
   <div class="sect">運費</div>
@@ -368,19 +354,11 @@ button:focus-visible,summary:focus-visible,input:focus-visible{outline:2.5px sol
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script>
-const COMBOS = [
-  { label:"纖體組合", cls:"rose", price:3840, orig:12230,
-    items:"纖纖飲2盒＋纖飄錠1盒", gift:"纖酵素正貨1盒",
-    parts:[["纖纖飲",2,"盒"],["纖飄錠",1,"盒"]], giftN:"纖酵素正貨", giftQ:1, giftU:"盒" },
-  { label:"美肌組合", cls:"jade", price:3560, orig:5340,
-    items:"水光錠2盒＋面膜1盒", gift:"小白瓶身體精華油",
-    parts:[["水光錠",2,"盒"],["面膜",1,"盒"]], giftN:"小白瓶身體精華油", giftQ:1, giftU:"" }
-];
 const LEVELS = [
-  { name:"實習加盟",        cost:[3480,3070] },
-  { name:"三級零售加盟",     cost:[2970,2660] },
-  { name:"三級輔導督導加盟", cost:[2865,2565] },
-  { name:"二級輔導督導加盟", cost:[2640,2290] }
+  { name:"實習加盟" },
+  { name:"三級零售加盟" },
+  { name:"三級輔導督導加盟" },
+  { name:"二級輔導督導加盟" }
 ];
 const GROUPS = [
   { cat:"體重管理系列", list:[
@@ -424,9 +402,8 @@ const SHIP = [0,60,70,80,130,150];
 let cShip = 0, tShip = 0, jShip = 0;
 
 const fmt = n => n.toLocaleString("en-US");
-let cQty = [0,0];
 const aQty = {};
-let cur = 0, tQty = [0,0];
+let cur = 0;
 
 /* ---- 配色 ---- */
 const THEMES = [
@@ -536,29 +513,7 @@ function tab(i){
 }
 TABS.forEach((t,i) => t.onclick = () => tab(i));
 
-/* ---- 客人：組合卡 ---- */
-const combosEl = document.getElementById("combos");
-COMBOS.forEach((c,i) => {
-  const el = document.createElement("div");
-  el.className = "card " + c.cls;
-  el.innerHTML =
-    '<div class="head"><span class="dot"></span><b>' + c.label + '</b></div>' +
-    '<div class="items">' + c.items + '</div>' +
-    '<div class="gift"><small>贈</small><span>' + c.gift + '</span></div>' +
-    '<div class="buy"><div class="p">' +
-      '<div class="vip"><i>$</i>' + fmt(c.price) + '</div>' +
-      '<span class="orig">限時優惠VIP價　<s>原價 $' + fmt(c.orig) + '</s></span>' +
-    '</div><div class="stepper">' +
-      '<button data-s="-1" aria-label="' + c.label + ' 減少">−</button><output>0</output>' +
-      '<button data-s="1" aria-label="' + c.label + ' 增加">＋</button>' +
-    '</div></div>';
-  el.querySelectorAll("[data-s]").forEach(b => {
-    b.onclick = () => { cQty[i] = Math.min(99, Math.max(0, cQty[i] + (+b.dataset.s))); renderC(); };
-  });
-  combosEl.appendChild(el);
-});
-
-/* ---- 客人：加購 ---- */
+/* ---- 客人：商品 ---- */
 const addonsEl = document.getElementById("addons");
 GROUPS.forEach((g,gi) => {
   if (g.team) return;
@@ -589,7 +544,6 @@ GROUPS.forEach((g,gi) => {
 
 function tierOf(){
   let qr = 0, mc = 0;
-  cQty.forEach((q,i) => { qr += COMBOS[i].orig * q; mc += q * 3; });
   GROUPS.forEach((g,gi) => {
     if (g.team) return;
     g.list.forEach((p,pi) => {
@@ -638,16 +592,6 @@ function renderC(){
   const T = tierOf();
   let pay = 0, orig = 0, count = 0;
 
-  [...combosEl.children].forEach((el,i) => {
-    const q = cQty[i];
-    el.querySelector("output").textContent = q;
-    el.querySelector('[data-s="-1"]').disabled = q === 0;
-    el.classList.toggle("on", q > 0);
-    pay  += q * COMBOS[i].price;
-    orig += q * COMBOS[i].orig;
-    count += q;
-  });
-
   [...addonsEl.children].forEach((d,gi) => {
     let n = 0;
     d.querySelectorAll(".prod").forEach(row => {
@@ -689,7 +633,7 @@ function renderC(){
   num.innerHTML = '<i>$</i>' + fmt(pay);
   num.disabled = pay === 0;
   document.getElementById("cLab").textContent = count > 0 ? "應付總金額 · 共 " + count + " 件" : "應付總金額";
-  document.getElementById("cTap").textContent = pay > 0 ? "點金額複製" : "先選組合";
+  document.getElementById("cTap").textContent = pay > 0 ? "點金額複製" : "先選商品";
   document.getElementById("cSave").hidden = pay === 0;
   document.getElementById("cOrig").textContent = "$" + fmt(orig);
   document.getElementById("cDiff").textContent = "$" + fmt(orig - goods);
@@ -703,7 +647,6 @@ document.getElementById("cNum").onclick = () => {
   if (pay) copy(String(pay), "已複製 " + fmt(pay));
 };
 document.getElementById("cReset").onclick = () => {
-  cQty = [0,0];
   Object.keys(aQty).forEach(k => aQty[k] = 0);
   cShip = 0;
   renderC();
@@ -715,26 +658,12 @@ document.getElementById("cCopy").onclick = () => {
   const nick = document.getElementById("nickname").value.trim() || "寶寶";
   const L = [];
   const T = tierOf();
-  const hasCombo = cQty[0] > 0 || cQty[1] > 0;
   L.push(nick + " 💕");
   L.push("以下是你購買的方案～");
-  if (hasCombo){
-    L.push("");
-    L.push("🥮 2026中秋組合｜9/17（四）－10/5（一）");
-  }
-  cQty.forEach((q,i) => {
-    if (!q) return;
-    const c = COMBOS[i];
-    L.push("");
-    L.push("【" + c.label + "】× " + q);
-    L.push("　" + c.items);
-    L.push("　送 " + c.gift);
-    L.push("　✨原價 $" + fmt(c.orig * q) + " → VIP $" + fmt(c.price * q));
-  });
   const add = pick();
   if (add.length){
     L.push("");
-    L.push(hasCombo ? "✨加購（" + T.lab + "）" : "✨商品（" + T.lab + "）");
+    L.push("✨商品（" + T.lab + "）");
     add.forEach(({p,q}) => {
       const unit = priceOf(p, T);
       L.push("・" + p.n + " " + p.u + " × " + q + "　$" + fmt(unit * q) +
@@ -765,28 +694,6 @@ LEVELS.forEach((lv,i) => {
   b.setAttribute("aria-pressed", i === 0);
   b.onclick = () => { cur = i; renderT(); };
   levelsEl.appendChild(b);
-});
-
-const earnsEl = document.getElementById("earns");
-COMBOS.forEach(c => {
-  const el = document.createElement("div");
-  el.className = "earn " + c.cls;
-  el.innerHTML = '<div class="info"><b>' + c.label + '</b><span data-line></span></div>' +
-                 '<button class="val" data-earn><em>你賺</em><b>$0</b></button>';
-  earnsEl.appendChild(el);
-});
-
-const rowsEl = document.getElementById("rows");
-COMBOS.forEach((c,i) => {
-  const el = document.createElement("div");
-  el.className = "row " + c.cls;
-  el.innerHTML = '<div class="info"><b>' + c.label + '</b><span data-unit></span></div>' +
-    '<div class="stepper"><button data-s="-1" aria-label="減少">−</button><output>0</output>' +
-    '<button data-s="1" aria-label="增加">＋</button></div>';
-  el.querySelectorAll("[data-s]").forEach(b => {
-    b.onclick = () => { tQty[i] = Math.min(99, Math.max(0, tQty[i] + (+b.dataset.s))); renderT(); };
-  });
-  rowsEl.appendChild(el);
 });
 
 const ordEl = document.getElementById("orderAddons");
@@ -825,28 +732,7 @@ function ordered(){
 function renderT(){
   [...levelsEl.children].forEach((b,i) => b.setAttribute("aria-pressed", i === cur));
 
-  [...earnsEl.children].forEach((el,i) => {
-    const cost = LEVELS[cur].cost[i], earn = COMBOS[i].price - cost;
-    el.querySelector("[data-line]").textContent = "客人付 $" + fmt(COMBOS[i].price) + "　你的成本 $" + fmt(cost);
-    const btn = el.querySelector("[data-earn]");
-    btn.querySelector("b").textContent = "$" + fmt(earn);
-    btn.onclick = () => copy(String(earn), "已複製 " + fmt(earn));
-  });
-
-  let cSum = 0, cEarn = 0, count = 0;
-  [...rowsEl.children].forEach((el,i) => {
-    const unit = LEVELS[cur].cost[i], q = tQty[i];
-    el.querySelector("output").textContent = q;
-    el.querySelector("[data-unit]").textContent =
-      q > 0 ? "單組 $" + fmt(unit) + "　小計 $" + fmt(unit*q) : "單組 $" + fmt(unit);
-    el.classList.toggle("zero", q === 0);
-    el.querySelector('[data-s="-1"]').disabled = q === 0;
-    cSum  += unit * q;
-    cEarn += (COMBOS[i].price - unit) * q;
-    count += q;
-  });
-
-  let sSum = 0, sEarn = 0;
+  let count = 0, sSum = 0, sEarn = 0;
   [...ordEl.children].forEach(d => {
     let n = 0;
     d.querySelectorAll(".prod").forEach(row => {
@@ -858,7 +744,7 @@ function renderT(){
       row.querySelector("output").textContent = q;
       row.querySelector("[data-cost]").textContent =
         cost == null ? "此級別成本未提供"
-                     : "成本 $" + fmt(cost) + (p.r ? "　零售 $" + fmt(p.r) : "") +
+                     : "成本 $" + fmt(cost) + (p.r ? "　零售 $" + fmt(p.r) + "　賺 $" + fmt(p.r - cost) : "") +
                        (q > 0 ? "　小計 $" + fmt(cost*q) : "");
       row.querySelector('[data-s="-1"]').disabled = q === 0;
       row.querySelector('[data-s="1"]').disabled  = cost == null;
@@ -872,7 +758,7 @@ function renderT(){
   });
 
   tShipBox.paint();
-  const goods = cSum + sSum;
+  const goods = sSum;
   const t = goods + (goods > 0 ? tShip : 0);
   const num = document.getElementById("tNum");
   num.innerHTML = '<i>$</i>' + fmt(t);
@@ -880,12 +766,11 @@ function renderT(){
   document.getElementById("tLab").textContent = count ? "應付總金額 · 共 " + count + " 件" : "應付總金額";
   document.getElementById("tTap").textContent = t ? "點金額複製" : "先選數量";
   document.getElementById("tSave").hidden = t === 0;
-  document.getElementById("tCsum").textContent = "$" + fmt(cSum);
   document.getElementById("tSsum").textContent = "$" + fmt(sSum);
-  document.getElementById("tEsum").textContent = "$" + fmt(cEarn + sEarn);
+  document.getElementById("tEsum").textContent = "$" + fmt(sEarn);
   document.getElementById("tCopy").disabled = t === 0;
   document.getElementById("tReset").disabled = t === 0;
-  return {t, goods, cSum, sSum, earn: cEarn + sEarn};
+  return {t, goods, sSum, earn: sEarn};
 }
 
 document.getElementById("tNum").onclick = () => {
@@ -893,7 +778,6 @@ document.getElementById("tNum").onclick = () => {
   if (t) copy(String(t), "已複製 " + fmt(t));
 };
 document.getElementById("tReset").onclick = () => {
-  tQty = [0,0];
   Object.keys(oQty).forEach(k => oQty[k] = 0);
   tShip = 0;
   renderT();
@@ -908,17 +792,10 @@ document.getElementById("tCopy").onclick = () => {
   if (day) L.push("日期：" + day);
   L.push("級別：" + LEVELS[cur].name);
 
-  if (tQty[0] || tQty[1]){
-    L.push("");
-    L.push("【中秋組合】");
-    tQty.forEach((q,i) => {
-      if (q) L.push(COMBOS[i].label + " " + q + " 組　$" + fmt(q * LEVELS[cur].cost[i]));
-    });
-  }
   const items = ordered();
   if (items.length){
     L.push("");
-    L.push("【單品】");
+    L.push("【商品】");
     items.forEach(({p,q}) => {
       L.push(p.n + " " + p.u + " × " + q + "　$" + fmt(p.c[cur] * q));
     });
@@ -939,7 +816,7 @@ const JOIN = [
   { name:"實習零售加盟商", lvl:0, stock:6600,  kit:200, refill:"每兩個月補貨額 $6,000（可累積）" },
   { name:"三級零售加盟商", lvl:1, stock:19600, kit:200, refill:"每兩個月補貨額 $12,000（可累積）" }
 ];
-let jSel = 0, jCombo = [0,0];
+let jSel = 0;
 const jQty = {};
 
 const jLevelsEl = document.getElementById("jLevels");
@@ -951,27 +828,6 @@ JOIN.forEach((j,i) => {
   b.setAttribute("aria-pressed", i === 0);
   b.onclick = () => { jSel = i; renderJ(); };
   jLevelsEl.appendChild(b);
-});
-
-const jCombosEl = document.getElementById("jCombos");
-COMBOS.forEach((c,i) => {
-  const el = document.createElement("div");
-  el.className = "card " + c.cls;
-  el.innerHTML =
-    '<div class="head"><span class="dot"></span><b>' + c.label + '</b></div>' +
-    '<div class="items">' + c.items + '</div>' +
-    '<div class="gift"><small>贈</small><span>' + c.gift + '</span></div>' +
-    '<div class="buy"><div class="p">' +
-      '<div class="vip"><i>$</i><span data-jcost>0</span></div>' +
-      '<span class="orig" data-jline></span>' +
-    '</div><div class="stepper">' +
-      '<button data-s="-1" aria-label="減少">−</button><output>0</output>' +
-      '<button data-s="1" aria-label="增加">＋</button>' +
-    '</div></div>';
-  el.querySelectorAll("[data-s]").forEach(b => {
-    b.onclick = () => { jCombo[i] = Math.min(99, Math.max(0, jCombo[i] + (+b.dataset.s))); renderJ(); };
-  });
-  jCombosEl.appendChild(el);
 });
 
 const jPickEl = document.getElementById("jPick");
@@ -1013,21 +869,6 @@ function renderJ(){
   [...jLevelsEl.children].forEach((b,i) => b.setAttribute("aria-pressed", i === jSel));
 
   let cost = 0, vip = 0, retail = 0, n = 0;
-  const gifts = [];
-  [...jCombosEl.children].forEach((el,i) => {
-    const c = COMBOS[i], unit = LEVELS[lv].cost[i], q = jCombo[i];
-    el.querySelector("[data-jcost]").textContent = fmt(unit);
-    el.querySelector("[data-jline]").textContent =
-      "加盟成本／組　VIP $" + fmt(c.price) + "　原價 $" + fmt(c.orig) +
-      (q > 0 ? "　小計 $" + fmt(unit*q) : "");
-    el.querySelector("output").textContent = q;
-    el.querySelector('[data-s="-1"]').disabled = q === 0;
-    el.classList.toggle("on", q > 0);
-    if (q > 0){
-      cost += unit*q; vip += c.price*q; retail += c.orig*q; n += q;
-      gifts.push(c.gift + " ×" + q);
-    }
-  });
   [...jPickEl.children].forEach(d => {
     let cnt = 0;
     d.querySelectorAll(".prod").forEach(row => {
@@ -1072,8 +913,6 @@ function renderJ(){
   document.getElementById("jCost").textContent   = "$" + fmt(cost);
   document.getElementById("jKit").textContent    = "$" + fmt(J.kit);
 
-  document.getElementById("jGiftRow").hidden = gifts.length === 0;
-  document.getElementById("jGift").textContent = gifts.join("、");
 
   const num = document.getElementById("jNum");
   num.innerHTML = '<i>$</i>' + fmt(cost > 0 ? pay : 0);
@@ -1089,7 +928,7 @@ function renderJ(){
     J.name + "：首次備貨 $" + fmt(J.stock) + " ＋ 創業包 $" + fmt(J.kit) +
     " ＝ $" + fmt(J.stock + J.kit) + "。後續需" + J.refill +
     "。省下的金額以同一批貨的 VIP 價與消費者零售價為比較基準。";
-  return {cost, vip, retail, pay, goods, gifts};
+  return {cost, vip, retail, pay, goods};
 }
 
 document.getElementById("jNum").onclick = () => {
@@ -1098,7 +937,6 @@ document.getElementById("jNum").onclick = () => {
 };
 document.getElementById("jReset").onclick = () => {
   Object.keys(jQty).forEach(k => jQty[k] = 0);
-  jCombo = [0,0];
   jShip = 0;
   renderJ();
 };
@@ -1123,14 +961,6 @@ document.getElementById("jCopy").onclick = () => {
   L.push("【 備 貨 內 容 】");
 
   const blocks = [];
-  jCombo.forEach((q,i) => {
-    if (!q) return;
-    const c = COMBOS[i];
-    const b = [c.label + " × " + q];
-    c.parts.forEach(([n,pq,u]) => b.push(n + " × " + pq + u));
-    b.push("贈｜" + c.giftN + " × " + (c.giftQ * q) + c.giftU);
-    blocks.push(b);
-  });
   const singles = jPicked();
   if (singles.length){
     blocks.push(singles.map(({p,q}) => p.n + " × " + q));
@@ -1219,7 +1049,7 @@ renderR();
 
 /* ---- 新人流程話術 ---- */
 const PRODS = [
- { t:"🌿 纖體組｜整組介紹", x:`🌿 中秋纖體組
+ { hide:1, t:"🌿 纖體組｜整組介紹", x:`🌿 中秋纖體組
 
 纖纖飲 × 2盒
 纖飄錠 × 1盒
@@ -1343,7 +1173,7 @@ const PRODS = [
 ▪️ 排便不規律的人` },
 
 
- { t:"✨ 美肌組｜整組介紹", x:`✨ 中秋美肌組
+ { hide:1, t:"✨ 美肌組｜整組介紹", x:`✨ 中秋美肌組
 
 水光錠 × 2盒
 水光繃帶面膜 × 1盒
@@ -1656,7 +1486,7 @@ const SHORTS = [
 ];
 
 const SALES = [
- { t:"📋 美肌組合銷售 SOP", x:`美肌組合銷售 SOP
+ { hide:1, t:"📋 美肌組合銷售 SOP", x:`美肌組合銷售 SOP
 
 1️⃣ 對照圖卡，精準定位痛點
 ・開啟「不同客人如何搭配」照片，找到顧客對應的膚質框框（敏弱肌／混合肌／乾肌／油痘肌）
@@ -1702,7 +1532,7 @@ const SALES = [
 它還能幫你把原本擦的保養品吸收率放大2~3倍，完全不浪費!
 既然都要保養，用對搭配讓效果翻倍不是更好嗎？` },
 
- { t:"🛡 抗拒點2｜有點貴，我考慮一下", x:`❓客人：這組合有點貴耶，我考慮一下。
+ { hide:1, t:"🛡 抗拒點2｜有點貴，我考慮一下", x:`❓客人：這組合有點貴耶，我考慮一下。
 
 🧠 真實背後原因
 價值感不足（覺得不值這個價）、對效果沒信心，或是被一次性的總價嚇到。
@@ -1749,7 +1579,7 @@ const SALES = [
 ];
 
 const TMPLS = [
- { t:"⚠️ 老客戶私訊（中秋活動）",
+ { hide:1, t:"⚠️ 老客戶私訊（中秋活動）",
    w:"只能一對一私訊給「曾經跟你買過產品」的客人。不可以公開貼文、限動或群發，否則會違規。",
    x:`午安 XX ♡
 中秋活動出來啦～
@@ -1898,7 +1728,7 @@ const TMPLS = [
 
 function renderCards(list, boxId){
   const box = document.getElementById(boxId);
-  list.forEach(t => {
+  list.filter(t => !t.hide).forEach(t => {
   const el = document.createElement("div");
   el.className = "tmpl";
   const head = document.createElement("div");
