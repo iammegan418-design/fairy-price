@@ -412,8 +412,8 @@ const LEVELS = [
 ];
 const GROUPS = [
   { cat:"🌕 十月限時活動", team:1, list:[
-    {n:"益生菌 買3送1組合",u:"3盒＋送1盒",r:null,d:null,v:null,c:[2970,2580,2490,2310]},
-    {n:"葉黃素晶亮凍 買3送1組合",u:"3盒＋送1盒",r:null,d:null,v:null,c:[1590,1365,1320,1230]}
+    {n:"益生菌 買3送1組合",u:"3盒＋送1盒",h:"益生菌",k:"買3送1組合",r:null,d:null,v:null,c:[2970,2580,2490,2310]},
+    {n:"葉黃素晶亮凍 買3送1組合",u:"3盒＋送1盒",h:"葉黃素晶亮凍",k:"買3送1組合",r:null,d:null,v:null,c:[1590,1365,1320,1230]}
   ]},
   { cat:"體重管理系列", list:[
     {n:"纖纖飲X",u:"14入/盒",r:1480,d:1380,v:1280,c:[1160,990,955,880]},
@@ -814,17 +814,23 @@ document.getElementById("tCopy").onclick = () => {
     L.push("");
     L.push("【商品】");
     items.forEach(({p,q}) => {
-      L.push(p.n + " " + p.u + " × " + q + "　$" + fmt(p.c[cur] * q));
+      if (p.h){
+        L.push(p.h);
+        L.push(p.k + " × " + q + "組　$" + fmt(p.c[cur] * q));
+        L.push("");
+      } else {
+        L.push(p.n + " " + p.u + " × " + q + "　$" + fmt(p.c[cur] * q));
+      }
     });
   }
-  L.push("");
+  if (L[L.length-1] !== "") L.push("");
   L.push("－－－－－－－－");
   if (tShip > 0){
     L.push("商品合計 $" + fmt(goods));
     L.push("運費 $" + fmt(tShip));
   }
   L.push("應付總金額 $" + fmt(t));
-  L.push("（預估可賺 $" + fmt(earn) + "）");
+  if (earn > 0) L.push("（預估可賺 $" + fmt(earn) + "）");
   copy(L.join("\n"), "叫貨單已複製");
 };
 
