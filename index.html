@@ -515,8 +515,8 @@ GROUPS.forEach((g,gi) => {
 
 /* ---- 十月限時活動 ---- */
 const PROMOS = [
-  { id:"p1", cls:"jade", n:"益生菌 買3送1", items:"高機能益生菌 30包/盒 × 3盒", gift:"再送 高機能益生菌 × 1盒", line:"高機能益生菌 × 3盒＋送1盒", vip:3300, orig:5120 },
-  { id:"p2", cls:"rose", n:"葉黃素晶亮凍 買3送1", items:"金盞花葉黃素高鈣晶亮凍 10入/盒 × 3盒", gift:"再送 葉黃素晶亮凍 × 1盒", line:"金盞花葉黃素高鈣晶亮凍 × 3盒＋送1盒", vip:1800, orig:2720 }
+  { id:"p1", cls:"jade", n:"益生菌 買3送1", items:"高機能益生菌 30包/盒 × 3盒", gift:"再送 高機能益生菌 × 1盒", line:"益生菌 3送1活動", vip:3300, orig:5120 },
+  { id:"p2", cls:"rose", n:"葉黃素晶亮凍 買3送1", items:"金盞花葉黃素高鈣晶亮凍 10入/盒 × 3盒", gift:"再送 葉黃素晶亮凍 × 1盒", line:"果凍 3送1活動", vip:1800, orig:2720 }
 ];
 const pQty = {};
 const promosEl = document.getElementById("promos");
@@ -674,7 +674,9 @@ document.getElementById("cCopy").onclick = () => {
     L.push("");
     L.push("🌕十月限時活動（買3送1）");
     pp.forEach(({pr,q}) => {
-      L.push("・" + pr.line + (q > 1 ? " × " + q + "組" : "") + "　$" + fmt(pr.vip * q) + "（原價 $" + fmt(pr.orig * q) + "）");
+      L.push("");
+      L.push(pr.line);
+      L.push("× " + q + "組　$" + fmt(pr.vip * q));
     });
   }
   const add = pick();
@@ -691,10 +693,12 @@ document.getElementById("cCopy").onclick = () => {
   L.push("－－－－－－－－");
   L.push("🛍 商品原價共 $" + fmt(orig));
   L.push("💰 總共省下 $" + fmt(orig - goods));
+  L.push("");
   if (cShip > 0){
     L.push("🚚 運費 $" + fmt(cShip));
   }
   L.push("💗 應付總金額 $" + fmt(pay));
+  L.push("超級划算的!!!!!");
   copy(L.join("\n"), "方案已複製");
 };
 
