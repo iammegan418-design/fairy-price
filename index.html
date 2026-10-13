@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>仙女價格計算機</title>
-<link rel="apple-touch-icon" href="./仙女計算機夢幻圖標.png?v=7">
-<link rel="icon" type="image/png" href="./仙女計算機夢幻圖標.png?v=7">
+<link rel="apple-touch-icon" href="icon-512.png?v=6">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png?v=6">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="仙女計算機">
@@ -14,7 +14,7 @@
 <meta property="og:url" content="https://iammegan418-design.github.io/fairy-price/">
 <meta property="og:title" content="仙女價格計算機">
 <meta property="og:description" content="客人報價・團隊叫貨・加盟試算，一鍵算好">
-<meta property="og:image" content="https://iammegan418-design.github.io/fairy-price/fairy-share.jpg.png?v=5">
+<meta property="og:image" content="https://iammegan418-design.github.io/fairy-price/og-image.jpg?v=6">
 <meta property="og:image:width" content="600">
 <meta property="og:image:height" content="600">
 <meta name="description" content="客人報價・團隊叫貨・加盟試算，一鍵算好">
@@ -282,6 +282,9 @@ footer{padding-bottom:84px}
     <input id="nickname" value="寶寶" maxlength="12" autocomplete="off">
   </div>
 
+  <div class="sect">🌕 十月限時活動 <span>· 買3送1 限時組合</span></div>
+  <div id="promos"></div>
+
   <div class="sect">選商品 <span>· 自動套用優惠／VIP 價</span></div>
   <div class="tierbar" id="cTier"></div>
   <div id="addons"></div>
@@ -408,6 +411,10 @@ const LEVELS = [
   { name:"二級輔導督導加盟" }
 ];
 const GROUPS = [
+  { cat:"🌕 十月限時活動", team:1, list:[
+    {n:"益生菌 買3送1組合",u:"3盒＋送1盒",r:null,d:null,v:null,c:[2970,2580,2490,2310]},
+    {n:"葉黃素晶亮凍 買3送1組合",u:"3盒＋送1盒",r:null,d:null,v:null,c:[1590,1365,1320,1230]}
+  ]},
   { cat:"體重管理系列", list:[
     {n:"纖纖飲X",u:"14入/盒",r:1480,d:1380,v:1280,c:[1160,990,955,880]},
     {n:"纖飄錠",u:"60錠/盒",r:1480,d:1380,v:1280,c:[1160,990,955,880]},
@@ -506,6 +513,32 @@ GROUPS.forEach((g,gi) => {
   addonsEl.appendChild(d);
 });
 
+/* ---- 十月限時活動 ---- */
+const PROMOS = [
+  { id:"p1", cls:"jade", n:"益生菌 買3送1", items:"高機能益生菌 30包/盒 × 3盒", gift:"再送 高機能益生菌 × 1盒", line:"高機能益生菌 × 3盒＋送1盒", vip:3300, orig:5120 },
+  { id:"p2", cls:"rose", n:"葉黃素晶亮凍 買3送1", items:"金盞花葉黃素高鈣晶亮凍 10入/盒 × 3盒", gift:"再送 葉黃素晶亮凍 × 1盒", line:"金盞花葉黃素高鈣晶亮凍 × 3盒＋送1盒", vip:1800, orig:2720 }
+];
+const pQty = {};
+const promosEl = document.getElementById("promos");
+PROMOS.forEach(pr => {
+  const c = document.createElement("div");
+  c.className = "card " + pr.cls;
+  c.innerHTML =
+    '<div class="head"><span class="dot"></span><b>' + pr.n + '</b></div>' +
+    '<div class="items">' + pr.items + '</div>' +
+    '<div class="gift"><small>贈</small>' + pr.gift + '</div>' +
+    '<div class="buy"><div class="p"><div class="vip"><i>$</i>' + fmt(pr.vip) + '</div>' +
+    '<span class="orig">限時優惠 VIP 組合價｜原價 <s>$' + fmt(pr.orig) + '</s>，省 $' + fmt(pr.orig - pr.vip) + '</span></div>' +
+    '<div class="stepper"><button data-s="-1" aria-label="減少">−</button><output>0</output>' +
+    '<button data-s="1" aria-label="增加">＋</button></div></div>';
+  c.querySelectorAll("[data-s]").forEach(b => {
+    b.onclick = () => { pQty[pr.id] = Math.min(99, Math.max(0, (pQty[pr.id]||0) + (+b.dataset.s))); renderC(); };
+  });
+  pr.el = c;
+  promosEl.appendChild(c);
+});
+function promoPicked(){ return PROMOS.filter(pr => (pQty[pr.id]||0) > 0).map(pr => ({pr, q:pQty[pr.id]})); }
+
 function tierOf(){
   let qr = 0, mc = 0;
   GROUPS.forEach((g,gi) => {
@@ -516,6 +549,7 @@ function tierOf(){
       qr += p.r * q; mc += q;
     });
   });
+  if (promoPicked().length) return {k:"vip", lab:"VIP價", qr, mc, promo:1};
   if (qr >= 4000) return {k:"vip",  lab:"VIP價",     qr, mc};
   if (mc >= 2)    return {k:"deal", lab:"兩盒優惠價", qr, mc};
   return {k:"retail", lab:"單盒零售價", qr, mc};
@@ -580,11 +614,21 @@ function renderC(){
     c.hidden = n === 0;
   });
 
+  PROMOS.forEach(pr => {
+    const q = pQty[pr.id] || 0;
+    pr.el.querySelector("output").textContent = q;
+    pr.el.querySelector('[data-s="-1"]').disabled = q === 0;
+    pr.el.classList.toggle("on", q > 0);
+    pay += pr.vip * q; orig += pr.orig * q; count += q;
+  });
+
   cShipBox.paint();
   const goods = pay;
   pay += (goods > 0 ? cShip : 0);
   const tb = document.getElementById("cTier");
-  if (T.k === "vip"){
+  if (T.promo){
+    tb.innerHTML = '已選 <b>十月限時活動組合</b>，加購其他商品一律用 <b>VIP 價</b> 計算。體驗包不打折。';
+  } else if (T.k === "vip"){
     tb.innerHTML = '目前用 <b>VIP 價</b> 計算（主商品零售價已達 $4,000）。體驗包不打折，也不計入門檻。';
   } else if (T.k === "deal"){
     tb.innerHTML = '目前用 <b>兩盒優惠價</b> 計算。零售價再滿 <b>$' + fmt(4000 - T.qr) +
@@ -612,6 +656,7 @@ document.getElementById("cNum").onclick = () => {
 };
 document.getElementById("cReset").onclick = () => {
   Object.keys(aQty).forEach(k => aQty[k] = 0);
+  Object.keys(pQty).forEach(k => pQty[k] = 0);
   cShip = 0;
   renderC();
 };
@@ -624,10 +669,18 @@ document.getElementById("cCopy").onclick = () => {
   const T = tierOf();
   L.push(nick + " 💕");
   L.push("以下是你購買的方案～");
+  const pp = promoPicked();
+  if (pp.length){
+    L.push("");
+    L.push("🌕十月限時活動（買3送1）");
+    pp.forEach(({pr,q}) => {
+      L.push("・" + pr.line + (q > 1 ? " × " + q + "組" : "") + "　$" + fmt(pr.vip * q) + "（原價 $" + fmt(pr.orig * q) + "）");
+    });
+  }
   const add = pick();
   if (add.length){
     L.push("");
-    L.push("✨商品（" + T.lab + "）");
+    L.push(pp.length ? "✨加購商品（VIP價）" : "✨商品（" + T.lab + "）");
     add.forEach(({p,q}) => {
       const unit = priceOf(p, T);
       L.push("・" + p.n + " " + p.u + " × " + q + "　$" + fmt(unit * q) +
