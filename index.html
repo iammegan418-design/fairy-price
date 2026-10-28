@@ -172,6 +172,10 @@ details[open] summary .arw{transform:rotate(90deg)}
 .prod .n span .ladder em{font-style:normal;padding:2px 7px;border-radius:999px;background:var(--paper);color:var(--muted)}
 .prod .n span .ladder em.cur{background:var(--rose-soft);color:var(--rose);font-weight:700}
 .prod .n span .ladder em.gap{background:none;color:var(--plum);padding-left:2px}
+.curs{display:flex;flex-wrap:wrap;gap:8px;margin:8px 16px 0}
+.curs button{font-family:inherit;font-size:13.5px;font-weight:700;padding:9px 12px;border-radius:12px;cursor:pointer;
+  border:1px solid var(--hairline);background:#fff;color:var(--plum)}
+.curs button[aria-pressed="true"]{background:var(--grad);color:var(--onp);border-color:transparent}
 .preview{margin:12px 16px 0;padding:14px 16px;border-radius:14px;background:#fff;border:1px dashed var(--hairline)}
 .preview.p2{border-style:solid;border-color:var(--rose-soft);background:#FFFBF9}
 .preview .pl{font-size:12px;letter-spacing:.12em;color:var(--muted);margin-bottom:8px}
@@ -307,15 +311,17 @@ footer{padding-bottom:84px}
     <pre id="cPrev2T"></pre>
     <button class="act main" id="cCopy2" style="width:100%;margin-top:12px">複製方案二給客人</button>
   </div>
-  <div class="sect">運費</div>
-  <div class="ship" id="cShipBox"></div>
+<div class="sect">幣別 <span>· 海外客人選當地幣別</span></div>
+  <div class="curs" data-curs></div>
+  <div data-twonly><div class="sect">運費</div>
+  <div class="ship" id="cShipBox"></div></div>
   <div class="nick">
     <label for="nickname">稱呼</label>
     <input id="nickname" value="寶寶" maxlength="12" autocomplete="off">
   </div>
 
-  <div class="sect">🌕 十月限時活動 <span>· 買3送1 限時組合</span></div>
-  <div id="promos"></div>
+  <div data-twonly><div class="sect">🌕 十月限時活動 <span>· 買3送1 限時組合</span></div>
+  <div id="promos"></div></div>
 
   <div class="sect">選商品 <span>· 自動套用優惠／VIP 價</span></div>
   <div class="tierbar" id="cTier"></div>
@@ -338,8 +344,10 @@ footer{padding-bottom:84px}
     <button class="act main" id="tCopy" disabled>複製叫貨單</button>
     <button class="act" id="tReset" disabled>清空</button>
   </div>
-  <div class="sect">運費</div>
-  <div class="ship" id="tShipBox"></div>
+<div class="sect">幣別 <span>· 海外客人選當地幣別</span></div>
+  <div class="curs" data-curs></div>
+  <div data-twonly><div class="sect">運費</div>
+  <div class="ship" id="tShipBox"></div></div>
   <div class="nick">
     <label for="orderName">叫貨人</label>
     <input id="orderName" placeholder="輸入名字" maxlength="16" autocomplete="off">
@@ -493,7 +501,23 @@ const GROUPS = [
 const SHIP = [0,60,70,80,130,150];
 let cShip = 0, tShip = 0, jShip = 0;
 
-const fmt = n => n.toLocaleString("en-US");
+const fmt = n => (Math.round(n*100)/100).toLocaleString("en-US", {maximumFractionDigits:2});
+/* ---- 外幣（2026.05.20 價目表／代理級別成本表）---- */
+const FX = {"MOP": {"sym": "MOP$", "name": "澳門 MOP", "vip": 1200, "join": [3100, 6200, 19600, 66000, 142000], "refill": [2050, 4120, 10300, 22660, 39000], "r": {"纖纖飲X": 465, "纖飄錠": 465, "雪花紫纖飲": 310, "爆纖錠": 290, "爆纖錠 體驗包": 78, "植萃纖酵宿": 310, "植萃纖酵宿 體驗包": 57, "肽纖飲 可可／奶茶風味": 310, "複方金盞花葉黃素EX飲": 339, "金盞花葉黃素高鈣晶亮凍": 206, "高機能益生菌": 390, "9國英雄TURBO極速錠": 206, "療肺草正冠茶": 310, "固樂纖": 505, "水光錠": 505, "水光繃帶面膜 精裝盒": 215, "雪聚露": 390, "婕肌零洗卸凝膠": 310, "婕肌零 體驗包": 12.4, "精純玻尿酸保濕原液": 310, "急救小白瓶": 390, "積雪草護手霜": 206, "法樂蓬洗髮露": 390, "法樂蓬洗髮露 體驗包": 9.3, "法樂蓬養髮原液": 339}, "v": {"纖纖飲X": 415, "纖飄錠": 415, "雪花紫纖飲": 280, "爆纖錠": 260, "爆纖錠 體驗包": null, "植萃纖酵宿": 280, "植萃纖酵宿 體驗包": null, "肽纖飲 可可／奶茶風味": 280, "複方金盞花葉黃素EX飲": 310, "金盞花葉黃素高鈣晶亮凍": 186, "高機能益生菌": 350, "9國英雄TURBO極速錠": 186, "療肺草正冠茶": 280, "固樂纖": 455, "水光錠": 455, "水光繃帶面膜 精裝盒": 185, "雪聚露": 350, "婕肌零洗卸凝膠": 280, "婕肌零 體驗包": null, "精純玻尿酸保濕原液": 280, "急救小白瓶": 350, "積雪草護手霜": 186, "法樂蓬洗髮露": 350, "法樂蓬洗髮露 體驗包": null, "法樂蓬養髮原液": 310}, "c": [{"纖纖飲X": 360, "纖飄錠": 360, "雪花紫纖飲": 240, "爆纖錠": 220, "爆纖錠 體驗包": 59, "植萃纖酵宿": 240, "植萃纖酵宿 體驗包": 43, "肽纖飲 可可／奶茶風味": 240, "複方金盞花葉黃素EX飲": 265, "金盞花葉黃素高鈣晶亮凍": 155, "高機能益生菌": 300, "9國英雄TURBO極速錠": 155, "療肺草正冠茶": 240, "固樂纖": 400, "水光錠": 400, "水光繃帶面膜 精裝盒": 166, "雪聚露": 300, "婕肌零洗卸凝膠": 240, "婕肌零 體驗包": 9.3, "精純玻尿酸保濕原液": 240, "急救小白瓶": 300, "積雪草護手霜": 155, "法樂蓬洗髮露": 300, "法樂蓬洗髮露 體驗包": 7.0, "法樂蓬養髮原液": 265}, {"纖纖飲X": 296, "纖飄錠": 296, "雪花紫纖飲": 205, "爆纖錠": 190, "爆纖錠 體驗包": 50, "植萃纖酵宿": 205, "植萃纖酵宿 體驗包": 38, "肽纖飲 可可／奶茶風味": 205, "複方金盞花葉黃素EX飲": 225, "金盞花葉黃素高鈣晶亮凍": 134, "高機能益生菌": 270, "9國英雄TURBO極速錠": 134, "療肺草正冠茶": 205, "固樂纖": 330, "水光錠": 330, "水光繃帶面膜 精裝盒": 150, "雪聚露": 270, "婕肌零洗卸凝膠": 205, "婕肌零 體驗包": 7.7, "精純玻尿酸保濕原液": 205, "急救小白瓶": 270, "積雪草護手霜": 134, "法樂蓬洗髮露": 270, "法樂蓬洗髮露 體驗包": 6.0, "法樂蓬養髮原液": 225}, {"纖纖飲X": 258, "纖飄錠": 258, "雪花紫纖飲": 180, "爆纖錠": 170, "爆纖錠 體驗包": 46, "植萃纖酵宿": 180, "植萃纖酵宿 體驗包": 33, "肽纖飲 可可／奶茶風味": 180, "複方金盞花葉黃素EX飲": 200, "金盞花葉黃素高鈣晶亮凍": 122, "高機能益生菌": 230, "9國英雄TURBO極速錠": 122, "療肺草正冠茶": 180, "固樂纖": 285, "水光錠": 285, "水光繃帶面膜 精裝盒": 134, "雪聚露": 230, "婕肌零洗卸凝膠": 180, "婕肌零 體驗包": 6.2, "精純玻尿酸保濕原液": 180, "急救小白瓶": 230, "積雪草護手霜": 122, "法樂蓬洗髮露": 230, "法樂蓬洗髮露 體驗包": 5.1, "法樂蓬養髮原液": 200}, {"纖纖飲X": 225, "纖飄錠": 225, "雪花紫纖飲": 160, "爆纖錠": 150, "爆纖錠 體驗包": 41, "植萃纖酵宿": 160, "植萃纖酵宿 體驗包": 29, "肽纖飲 可可／奶茶風味": 160, "複方金盞花葉黃素EX飲": 178, "金盞花葉黃素高鈣晶亮凍": 109, "高機能益生菌": 200, "9國英雄TURBO極速錠": 109, "療肺草正冠茶": 160, "固樂纖": 250, "水光錠": 250, "水光繃帶面膜 精裝盒": 120, "雪聚露": 200, "婕肌零洗卸凝膠": 160, "婕肌零 體驗包": 5.2, "精純玻尿酸保濕原液": 160, "急救小白瓶": 200, "積雪草護手霜": 109, "法樂蓬洗髮露": 200, "法樂蓬洗髮露 體驗包": 4.3, "法樂蓬養髮原液": 178}, {"纖纖飲X": 195, "纖飄錠": 195, "雪花紫纖飲": 137, "爆纖錠": 135, "爆纖錠 體驗包": 37, "植萃纖酵宿": 137, "植萃纖酵宿 體驗包": 25, "肽纖飲 可可／奶茶風味": 137, "複方金盞花葉黃素EX飲": 155, "金盞花葉黃素高鈣晶亮凍": 99, "高機能益生菌": 175, "9國英雄TURBO極速錠": 99, "療肺草正冠茶": 137, "固樂纖": 215, "水光錠": 215, "水光繃帶面膜 精裝盒": 107, "雪聚露": 175, "婕肌零洗卸凝膠": 137, "婕肌零 體驗包": 4.6, "精純玻尿酸保濕原液": 137, "急救小白瓶": 175, "積雪草護手霜": 99, "法樂蓬洗髮露": 175, "法樂蓬洗髮露 體驗包": 3.6, "法樂蓬養髮原液": 155}]}, "HKD": {"sym": "HK$", "name": "香港 HKD", "vip": 1200, "join": [3000, 6000, 19000, 64000, 138000], "refill": [2000, 4000, 10000, 22000, 38000], "r": {"纖纖飲X": 450, "纖飄錠": 450, "雪花紫纖飲": 300, "爆纖錠": 280, "爆纖錠 體驗包": 76, "植萃纖酵宿": 300, "植萃纖酵宿 體驗包": 55, "肽纖飲 可可／奶茶風味": 300, "複方金盞花葉黃素EX飲": 329, "金盞花葉黃素高鈣晶亮凍": 200, "高機能益生菌": 380, "9國英雄TURBO極速錠": 200, "療肺草正冠茶": 300, "固樂纖": 490, "水光錠": 490, "水光繃帶面膜 精裝盒": 210, "雪聚露": 380, "婕肌零洗卸凝膠": 300, "婕肌零 體驗包": 12.0, "精純玻尿酸保濕原液": 300, "急救小白瓶": 380, "積雪草護手霜": 200, "法樂蓬洗髮露": 380, "法樂蓬洗髮露 體驗包": 9.0, "法樂蓬養髮原液": 329}, "v": {"纖纖飲X": 400, "纖飄錠": 400, "雪花紫纖飲": 270, "爆纖錠": 250, "爆纖錠 體驗包": null, "植萃纖酵宿": 270, "植萃纖酵宿 體驗包": null, "肽纖飲 可可／奶茶風味": 270, "複方金盞花葉黃素EX飲": 300, "金盞花葉黃素高鈣晶亮凍": 180, "高機能益生菌": 340, "9國英雄TURBO極速錠": 180, "療肺草正冠茶": 270, "固樂纖": 440, "水光錠": 440, "水光繃帶面膜 精裝盒": 180, "雪聚露": 340, "婕肌零洗卸凝膠": 270, "婕肌零 體驗包": null, "精純玻尿酸保濕原液": 270, "急救小白瓶": 340, "積雪草護手霜": 180, "法樂蓬洗髮露": 340, "法樂蓬洗髮露 體驗包": null, "法樂蓬養髮原液": 300}, "c": [{"纖纖飲X": 350, "纖飄錠": 350, "雪花紫纖飲": 230, "爆纖錠": 215, "爆纖錠 體驗包": 57, "植萃纖酵宿": 230, "植萃纖酵宿 體驗包": 42, "肽纖飲 可可／奶茶風味": 230, "複方金盞花葉黃素EX飲": 255, "金盞花葉黃素高鈣晶亮凍": 150, "高機能益生菌": 290, "9國英雄TURBO極速錠": 150, "療肺草正冠茶": 230, "固樂纖": 390, "水光錠": 390, "水光繃帶面膜 精裝盒": 163, "雪聚露": 290, "婕肌零洗卸凝膠": 230, "婕肌零 體驗包": 9.0, "精純玻尿酸保濕原液": 230, "急救小白瓶": 290, "積雪草護手霜": 150, "法樂蓬洗髮露": 290, "法樂蓬洗髮露 體驗包": 6.8, "法樂蓬養髮原液": 255}, {"纖纖飲X": 286, "纖飄錠": 286, "雪花紫纖飲": 200, "爆纖錠": 185, "爆纖錠 體驗包": 49, "植萃纖酵宿": 200, "植萃纖酵宿 體驗包": 37, "肽纖飲 可可／奶茶風味": 200, "複方金盞花葉黃素EX飲": 220, "金盞花葉黃素高鈣晶亮凍": 130, "高機能益生菌": 260, "9國英雄TURBO極速錠": 130, "療肺草正冠茶": 200, "固樂纖": 320, "水光錠": 320, "水光繃帶面膜 精裝盒": 147, "雪聚露": 260, "婕肌零洗卸凝膠": 200, "婕肌零 體驗包": 7.5, "精純玻尿酸保濕原液": 200, "急救小白瓶": 260, "積雪草護手霜": 130, "法樂蓬洗髮露": 260, "法樂蓬洗髮露 體驗包": 5.8, "法樂蓬養髮原液": 220}, {"纖纖飲X": 253, "纖飄錠": 253, "雪花紫纖飲": 175, "爆纖錠": 165, "爆纖錠 體驗包": 45, "植萃纖酵宿": 175, "植萃纖酵宿 體驗包": 32, "肽纖飲 可可／奶茶風味": 175, "複方金盞花葉黃素EX飲": 195, "金盞花葉黃素高鈣晶亮凍": 118, "高機能益生菌": 225, "9國英雄TURBO極速錠": 118, "療肺草正冠茶": 175, "固樂纖": 275, "水光錠": 275, "水光繃帶面膜 精裝盒": 132, "雪聚露": 225, "婕肌零洗卸凝膠": 175, "婕肌零 體驗包": 6.0, "精純玻尿酸保濕原液": 175, "急救小白瓶": 225, "積雪草護手霜": 118, "法樂蓬洗髮露": 225, "法樂蓬洗髮露 體驗包": 5.0, "法樂蓬養髮原液": 195}, {"纖纖飲X": 220, "纖飄錠": 220, "雪花紫纖飲": 153, "爆纖錠": 145, "爆纖錠 體驗包": 40, "植萃纖酵宿": 153, "植萃纖酵宿 體驗包": 28, "肽纖飲 可可／奶茶風味": 153, "複方金盞花葉黃素EX飲": 170, "金盞花葉黃素高鈣晶亮凍": 106, "高機能益生菌": 195, "9國英雄TURBO極速錠": 106, "療肺草正冠茶": 153, "固樂纖": 240, "水光錠": 240, "水光繃帶面膜 精裝盒": 118, "雪聚露": 195, "婕肌零洗卸凝膠": 153, "婕肌零 體驗包": 5.0, "精純玻尿酸保濕原液": 153, "急救小白瓶": 195, "積雪草護手霜": 106, "法樂蓬洗髮露": 195, "法樂蓬洗髮露 體驗包": 4.2, "法樂蓬養髮原液": 170}, {"纖纖飲X": 190, "纖飄錠": 190, "雪花紫纖飲": 133, "爆纖錠": 130, "爆纖錠 體驗包": 36, "植萃纖酵宿": 133, "植萃纖酵宿 體驗包": 24, "肽纖飲 可可／奶茶風味": 133, "複方金盞花葉黃素EX飲": 150, "金盞花葉黃素高鈣晶亮凍": 96, "高機能益生菌": 170, "9國英雄TURBO極速錠": 96, "療肺草正冠茶": 133, "固樂纖": 210, "水光錠": 210, "水光繃帶面膜 精裝盒": 105, "雪聚露": 170, "婕肌零洗卸凝膠": 133, "婕肌零 體驗包": 4.5, "精純玻尿酸保濕原液": 133, "急救小白瓶": 170, "積雪草護手霜": 96, "法樂蓬洗髮露": 170, "法樂蓬洗髮露 體驗包": 3.5, "法樂蓬養髮原液": 150}]}, "SGD": {"sym": "SGD$", "name": "新加坡 SGD", "vip": 240, "join": [500, 1000, 3500, 9000, 16250], "refill": [300, 600, 1750, 3100, 4400], "r": {"纖纖飲X": 80, "纖飄錠": 80, "雪花紫纖飲": 55, "爆纖錠": 50, "爆纖錠 體驗包": 14, "植萃纖酵宿": 55, "植萃纖酵宿 體驗包": 10, "肽纖飲 可可／奶茶風味": 55, "複方金盞花葉黃素EX飲": 59, "金盞花葉黃素高鈣晶亮凍": 36, "高機能益生菌": 68, "9國英雄TURBO極速錠": 36, "療肺草正冠茶": 55, "固樂纖": 88, "水光錠": 88, "水光繃帶面膜 精裝盒": 40, "雪聚露": 68, "婕肌零洗卸凝膠": 55, "婕肌零 體驗包": 2.3, "精純玻尿酸保濕原液": 55, "急救小白瓶": 68, "積雪草護手霜": 36, "法樂蓬洗髮露": 68, "法樂蓬洗髮露 體驗包": 1.75, "法樂蓬養髮原液": 59}, "v": {"纖纖飲X": 72, "纖飄錠": 72, "雪花紫纖飲": 50, "爆纖錠": 45, "爆纖錠 體驗包": null, "植萃纖酵宿": 50, "植萃纖酵宿 體驗包": null, "肽纖飲 可可／奶茶風味": 50, "複方金盞花葉黃素EX飲": 54, "金盞花葉黃素高鈣晶亮凍": 33, "高機能益生菌": 60, "9國英雄TURBO極速錠": 33, "療肺草正冠茶": 50, "固樂纖": 80, "水光錠": 80, "水光繃帶面膜 精裝盒": 35, "雪聚露": 60, "婕肌零洗卸凝膠": 50, "婕肌零 體驗包": null, "精純玻尿酸保濕原液": 50, "急救小白瓶": 60, "積雪草護手霜": 33, "法樂蓬洗髮露": 60, "法樂蓬洗髮露 體驗包": null, "法樂蓬養髮原液": 54}, "c": [{"纖纖飲X": 64, "纖飄錠": 64, "雪花紫纖飲": 44, "爆纖錠": 40, "爆纖錠 體驗包": 11, "植萃纖酵宿": 44, "植萃纖酵宿 體驗包": 8, "肽纖飲 可可／奶茶風味": 44, "複方金盞花葉黃素EX飲": 46, "金盞花葉黃素高鈣晶亮凍": 30, "高機能益生菌": 54, "9國英雄TURBO極速錠": 30, "療肺草正冠茶": 44, "固樂纖": 70, "水光錠": 70, "水光繃帶面膜 精裝盒": 32, "雪聚露": 54, "婕肌零洗卸凝膠": 44, "婕肌零 體驗包": 1.8, "精純玻尿酸保濕原液": 44, "急救小白瓶": 54, "積雪草護手霜": 30, "法樂蓬洗髮露": 54, "法樂蓬洗髮露 體驗包": 1.35, "法樂蓬養髮原液": 46}, {"纖纖飲X": 52, "纖飄錠": 52, "雪花紫纖飲": 38, "爆纖錠": 35, "爆纖錠 體驗包": 9.5, "植萃纖酵宿": 38, "植萃纖酵宿 體驗包": 7, "肽纖飲 可可／奶茶風味": 38, "複方金盞花葉黃素EX飲": 40, "金盞花葉黃素高鈣晶亮凍": 25, "高機能益生菌": 48, "9國英雄TURBO極速錠": 25, "療肺草正冠茶": 38, "固樂纖": 58, "水光錠": 58, "水光繃帶面膜 精裝盒": 28, "雪聚露": 48, "婕肌零洗卸凝膠": 38, "婕肌零 體驗包": 1.4, "精純玻尿酸保濕原液": 38, "急救小白瓶": 48, "積雪草護手霜": 25, "法樂蓬洗髮露": 48, "法樂蓬洗髮露 體驗包": 1.1, "法樂蓬養髮原液": 40}, {"纖纖飲X": 46, "纖飄錠": 46, "雪花紫纖飲": 33, "爆纖錠": 30, "爆纖錠 體驗包": 8.5, "植萃纖酵宿": 33, "植萃纖酵宿 體驗包": 5.8, "肽纖飲 可可／奶茶風味": 33, "複方金盞花葉黃素EX飲": 35, "金盞花葉黃素高鈣晶亮凍": 22.5, "高機能益生菌": 42, "9國英雄TURBO極速錠": 22.5, "療肺草正冠茶": 33, "固樂纖": 51, "水光錠": 51, "水光繃帶面膜 精裝盒": 25, "雪聚露": 42, "婕肌零洗卸凝膠": 33, "婕肌零 體驗包": 1.1, "精純玻尿酸保濕原液": 33, "急救小白瓶": 42, "積雪草護手霜": 22.5, "法樂蓬洗髮露": 42, "法樂蓬洗髮露 體驗包": 0.9, "法樂蓬養髮原液": 35}, {"纖纖飲X": 40, "纖飄錠": 40, "雪花紫纖飲": 28, "爆纖錠": 26, "爆纖錠 體驗包": 7.5, "植萃纖酵宿": 28, "植萃纖酵宿 體驗包": 5, "肽纖飲 可可／奶茶風味": 28, "複方金盞花葉黃素EX飲": 31, "金盞花葉黃素高鈣晶亮凍": 19.5, "高機能益生菌": 37, "9國英雄TURBO極速錠": 19.5, "療肺草正冠茶": 28, "固樂纖": 44, "水光錠": 44, "水光繃帶面膜 精裝盒": 22, "雪聚露": 37, "婕肌零洗卸凝膠": 28, "婕肌零 體驗包": 0.93, "精純玻尿酸保濕原液": 28, "急救小白瓶": 37, "積雪草護手霜": 19.5, "法樂蓬洗髮露": 37, "法樂蓬洗髮露 體驗包": 0.77, "法樂蓬養髮原液": 31}, {"纖纖飲X": 36, "纖飄錠": 36, "雪花紫纖飲": 24, "爆纖錠": 23, "爆纖錠 體驗包": 6.5, "植萃纖酵宿": 24, "植萃纖酵宿 體驗包": 4.3, "肽纖飲 可可／奶茶風味": 24, "複方金盞花葉黃素EX飲": 27, "金盞花葉黃素高鈣晶亮凍": 16.5, "高機能益生菌": 32, "9國英雄TURBO極速錠": 16.5, "療肺草正冠茶": 24, "固樂纖": 38, "水光錠": 38, "水光繃帶面膜 精裝盒": 20, "雪聚露": 32, "婕肌零洗卸凝膠": 24, "婕肌零 體驗包": 0.82, "精純玻尿酸保濕原液": 24, "急救小白瓶": 32, "積雪草護手霜": 16.5, "法樂蓬洗髮露": 32, "法樂蓬洗髮露 體驗包": 0.65, "法樂蓬養髮原液": 27}]}, "MYR": {"sym": "RM", "name": "馬來西亞 MYR", "vip": 700, "join": [1300, 2600, 10800, 27000, 50700], "refill": [900, 1700, 5400, 9200, 14000], "r": {"纖纖飲X": 240, "纖飄錠": 240, "雪花紫纖飲": 165, "爆纖錠": 150, "爆纖錠 體驗包": 40, "植萃纖酵宿": 165, "植萃纖酵宿 體驗包": 30, "肽纖飲 可可／奶茶風味": 165, "複方金盞花葉黃素EX飲": 179, "金盞花葉黃素高鈣晶亮凍": 110, "高機能益生菌": 206, "9國英雄TURBO極速錠": 110, "療肺草正冠茶": 165, "固樂纖": 270, "水光錠": 270, "水光繃帶面膜 精裝盒": 130, "雪聚露": 206, "婕肌零洗卸凝膠": 165, "婕肌零 體驗包": 6.5, "精純玻尿酸保濕原液": 165, "急救小白瓶": 206, "積雪草護手霜": 110, "法樂蓬洗髮露": 206, "法樂蓬洗髮露 體驗包": 4.8, "法樂蓬養髮原液": 179}, "v": {"纖纖飲X": 220, "纖飄錠": 220, "雪花紫纖飲": 150, "爆纖錠": 135, "爆纖錠 體驗包": null, "植萃纖酵宿": 150, "植萃纖酵宿 體驗包": null, "肽纖飲 可可／奶茶風味": 150, "複方金盞花葉黃素EX飲": 163, "金盞花葉黃素高鈣晶亮凍": 100, "高機能益生菌": 185, "9國英雄TURBO極速錠": 100, "療肺草正冠茶": 150, "固樂纖": 245, "水光錠": 245, "水光繃帶面膜 精裝盒": 110, "雪聚露": 185, "婕肌零洗卸凝膠": 150, "婕肌零 體驗包": null, "精純玻尿酸保濕原液": 150, "急救小白瓶": 185, "積雪草護手霜": 100, "法樂蓬洗髮露": 185, "法樂蓬洗髮露 體驗包": null, "法樂蓬養髮原液": 163}, "c": [{"纖纖飲X": 200, "纖飄錠": 200, "雪花紫纖飲": 130, "爆纖錠": 120, "爆纖錠 體驗包": 33, "植萃纖酵宿": 130, "植萃纖酵宿 體驗包": 24, "肽纖飲 可可／奶茶風味": 130, "複方金盞花葉黃素EX飲": 140, "金盞花葉黃素高鈣晶亮凍": 88, "高機能益生菌": 165, "9國英雄TURBO極速錠": 88, "療肺草正冠茶": 130, "固樂纖": 215, "水光錠": 215, "水光繃帶面膜 精裝盒": 104, "雪聚露": 165, "婕肌零洗卸凝膠": 130, "婕肌零 體驗包": 5.0, "精純玻尿酸保濕原液": 130, "急救小白瓶": 165, "積雪草護手霜": 88, "法樂蓬洗髮露": 165, "法樂蓬洗髮露 體驗包": 3.8, "法樂蓬養髮原液": 140}, {"纖纖飲X": 158, "纖飄錠": 158, "雪花紫纖飲": 112, "爆纖錠": 102, "爆纖錠 體驗包": 29, "植萃纖酵宿": 112, "植萃纖酵宿 體驗包": 21, "肽纖飲 可可／奶茶風味": 112, "複方金盞花葉黃素EX飲": 120, "金盞花葉黃素高鈣晶亮凍": 71, "高機能益生菌": 145, "9國英雄TURBO極速錠": 71, "療肺草正冠茶": 112, "固樂纖": 176, "水光錠": 176, "水光繃帶面膜 精裝盒": 92, "雪聚露": 145, "婕肌零洗卸凝膠": 112, "婕肌零 體驗包": 4.0, "精純玻尿酸保濕原液": 112, "急救小白瓶": 145, "積雪草護手霜": 71, "法樂蓬洗髮露": 145, "法樂蓬洗髮露 體驗包": 3.1, "法樂蓬養髮原液": 120}, {"纖纖飲X": 140, "纖飄錠": 140, "雪花紫纖飲": 98, "爆纖錠": 91, "爆纖錠 體驗包": 25, "植萃纖酵宿": 98, "植萃纖酵宿 體驗包": 18, "肽纖飲 可可／奶茶風味": 98, "複方金盞花葉黃素EX飲": 106, "金盞花葉黃素高鈣晶亮凍": 65, "高機能益生菌": 127, "9國英雄TURBO極速錠": 65, "療肺草正冠茶": 98, "固樂纖": 152, "水光錠": 152, "水光繃帶面膜 精裝盒": 82, "雪聚露": 127, "婕肌零洗卸凝膠": 98, "婕肌零 體驗包": 3.3, "精純玻尿酸保濕原液": 98, "急救小白瓶": 127, "積雪草護手霜": 65, "法樂蓬洗髮露": 127, "法樂蓬洗髮露 體驗包": 2.5, "法樂蓬養髮原液": 106}, {"纖纖飲X": 127, "纖飄錠": 127, "雪花紫纖飲": 86, "爆纖錠": 81, "爆纖錠 體驗包": 22, "植萃纖酵宿": 86, "植萃纖酵宿 體驗包": 15, "肽纖飲 可可／奶茶風味": 86, "複方金盞花葉黃素EX飲": 94, "金盞花葉黃素高鈣晶亮凍": 59, "高機能益生菌": 114, "9國英雄TURBO極速錠": 59, "療肺草正冠茶": 86, "固樂纖": 134, "水光錠": 134, "水光繃帶面膜 精裝盒": 73, "雪聚露": 114, "婕肌零洗卸凝膠": 86, "婕肌零 體驗包": 2.8, "精純玻尿酸保濕原液": 86, "急救小白瓶": 114, "積雪草護手霜": 59, "法樂蓬洗髮露": 114, "法樂蓬洗髮露 體驗包": 2.1, "法樂蓬養髮原液": 94}, {"纖纖飲X": 112, "纖飄錠": 112, "雪花紫纖飲": 74, "爆纖錠": 71, "爆纖錠 體驗包": 19, "植萃纖酵宿": 74, "植萃纖酵宿 體驗包": 13, "肽纖飲 可可／奶茶風味": 74, "複方金盞花葉黃素EX飲": 82, "金盞花葉黃素高鈣晶亮凍": 53, "高機能益生菌": 98, "9國英雄TURBO極速錠": 53, "療肺草正冠茶": 74, "固樂纖": 116, "水光錠": 116, "水光繃帶面膜 精裝盒": 65, "雪聚露": 98, "婕肌零洗卸凝膠": 74, "婕肌零 體驗包": 2.5, "精純玻尿酸保濕原液": 74, "急救小白瓶": 98, "積雪草護手霜": 53, "法樂蓬洗髮露": 98, "法樂蓬洗髮露 體驗包": 1.8, "法樂蓬養髮原液": 82}]}, "USD": {"sym": "USD$", "name": "美國 USD", "vip": 160, "join": [400, 800, 2400, 8200, 18000], "refill": [250, 500, 1200, 2800, 4800], "r": {"纖纖飲X": 62, "纖飄錠": 62, "雪花紫纖飲": 45, "爆纖錠": 45, "爆纖錠 體驗包": 14, "植萃纖酵宿": 45, "植萃纖酵宿 體驗包": 8, "肽纖飲 可可／奶茶風味": 45, "複方金盞花葉黃素EX飲": 49, "金盞花葉黃素高鈣晶亮凍": 26, "高機能益生菌": 49, "9國英雄TURBO極速錠": 26, "療肺草正冠茶": 45, "固樂纖": 66, "水光錠": 66, "水光繃帶面膜 精裝盒": 30, "雪聚露": 49, "婕肌零洗卸凝膠": 45, "婕肌零 體驗包": 1.6, "精純玻尿酸保濕原液": 45, "急救小白瓶": 49, "積雪草護手霜": 26, "法樂蓬洗髮露": 49, "法樂蓬洗髮露 體驗包": 1.2, "法樂蓬養髮原液": 49}, "v": {"纖纖飲X": 56, "纖飄錠": 56, "雪花紫纖飲": 40, "爆纖錠": 40, "爆纖錠 體驗包": null, "植萃纖酵宿": 40, "植萃纖酵宿 體驗包": null, "肽纖飲 可可／奶茶風味": 40, "複方金盞花葉黃素EX飲": 44, "金盞花葉黃素高鈣晶亮凍": 23, "高機能益生菌": 44, "9國英雄TURBO極速錠": 23, "療肺草正冠茶": 40, "固樂纖": 60, "水光錠": 60, "水光繃帶面膜 精裝盒": 26, "雪聚露": 44, "婕肌零洗卸凝膠": 40, "婕肌零 體驗包": null, "精純玻尿酸保濕原液": 40, "急救小白瓶": 44, "積雪草護手霜": 23, "法樂蓬洗髮露": 44, "法樂蓬洗髮露 體驗包": null, "法樂蓬養髮原液": 44}, "c": [{"纖纖飲X": 50, "纖飄錠": 50, "雪花紫纖飲": 35, "爆纖錠": 35, "爆纖錠 體驗包": 11, "植萃纖酵宿": 35, "植萃纖酵宿 體驗包": 6.5, "肽纖飲 可可／奶茶風味": 35, "複方金盞花葉黃素EX飲": 38, "金盞花葉黃素高鈣晶亮凍": 21, "高機能益生菌": 39, "9國英雄TURBO極速錠": 21, "療肺草正冠茶": 35, "固樂纖": 54, "水光錠": 54, "水光繃帶面膜 精裝盒": 23, "雪聚露": 39, "婕肌零洗卸凝膠": 35, "婕肌零 體驗包": 1.2, "精純玻尿酸保濕原液": 35, "急救小白瓶": 39, "積雪草護手霜": 21, "法樂蓬洗髮露": 39, "法樂蓬洗髮露 體驗包": 0.9, "法樂蓬養髮原液": 38}, {"纖纖飲X": 42, "纖飄錠": 42, "雪花紫纖飲": 30, "爆纖錠": 30, "爆纖錠 體驗包": 9.5, "植萃纖酵宿": 30, "植萃纖酵宿 體驗包": 5.5, "肽纖飲 可可／奶茶風味": 30, "複方金盞花葉黃素EX飲": 33, "金盞花葉黃素高鈣晶亮凍": 18, "高機能益生菌": 34, "9國英雄TURBO極速錠": 18, "療肺草正冠茶": 30, "固樂纖": 47, "水光錠": 47, "水光繃帶面膜 精裝盒": 21, "雪聚露": 34, "婕肌零洗卸凝膠": 30, "婕肌零 體驗包": 1.0, "精純玻尿酸保濕原液": 30, "急救小白瓶": 34, "積雪草護手霜": 18, "法樂蓬洗髮露": 34, "法樂蓬洗髮露 體驗包": 0.76, "法樂蓬養髮原液": 33}, {"纖纖飲X": 37, "纖飄錠": 37, "雪花紫纖飲": 26, "爆纖錠": 26, "爆纖錠 體驗包": 7.5, "植萃纖酵宿": 26, "植萃纖酵宿 體驗包": 4.5, "肽纖飲 可可／奶茶風味": 26, "複方金盞花葉黃素EX飲": 28, "金盞花葉黃素高鈣晶亮凍": 16, "高機能益生菌": 29, "9國英雄TURBO極速錠": 16, "療肺草正冠茶": 26, "固樂纖": 39, "水光錠": 39, "水光繃帶面膜 精裝盒": 18, "雪聚露": 29, "婕肌零洗卸凝膠": 26, "婕肌零 體驗包": 0.85, "精純玻尿酸保濕原液": 26, "急救小白瓶": 29, "積雪草護手霜": 16, "法樂蓬洗髮露": 29, "法樂蓬洗髮露 體驗包": 0.64, "法樂蓬養髮原液": 28}, {"纖纖飲X": 32, "纖飄錠": 32, "雪花紫纖飲": 22, "爆纖錠": 22, "爆纖錠 體驗包": 6.5, "植萃纖酵宿": 22, "植萃纖酵宿 體驗包": 3.8, "肽纖飲 可可／奶茶風味": 22, "複方金盞花葉黃素EX飲": 25, "金盞花葉黃素高鈣晶亮凍": 14, "高機能益生菌": 25, "9國英雄TURBO極速錠": 14, "療肺草正冠茶": 22, "固樂纖": 33, "水光錠": 33, "水光繃帶面膜 精裝盒": 16, "雪聚露": 25, "婕肌零洗卸凝膠": 22, "婕肌零 體驗包": 0.7, "精純玻尿酸保濕原液": 22, "急救小白瓶": 25, "積雪草護手霜": 14, "法樂蓬洗髮露": 25, "法樂蓬洗髮露 體驗包": 0.54, "法樂蓬養髮原液": 25}, {"纖纖飲X": 28, "纖飄錠": 28, "雪花紫纖飲": 19, "爆纖錠": 19, "爆纖錠 體驗包": 5.5, "植萃纖酵宿": 19, "植萃纖酵宿 體驗包": 3.3, "肽纖飲 可可／奶茶風味": 19, "複方金盞花葉黃素EX飲": 22, "金盞花葉黃素高鈣晶亮凍": 12, "高機能益生菌": 22, "9國英雄TURBO極速錠": 12, "療肺草正冠茶": 19, "固樂纖": 28, "水光錠": 28, "水光繃帶面膜 精裝盒": 14.5, "雪聚露": 22, "婕肌零洗卸凝膠": 19, "婕肌零 體驗包": 0.62, "精純玻尿酸保濕原液": 19, "急救小白瓶": 22, "積雪草護手霜": 12, "法樂蓬洗髮露": 22, "法樂蓬洗髮露 體驗包": 0.46, "法樂蓬養髮原液": 22}]}, "AUD": {"sym": "AUD$", "name": "澳洲 AUD", "vip": 160, "join": [550, 1100, 3200, 11000, 24000], "refill": [350, 700, 1600, 3800, 6500], "r": {"纖纖飲X": 83, "纖飄錠": 83, "雪花紫纖飲": 60, "爆纖錠": 60, "爆纖錠 體驗包": 15, "植萃纖酵宿": 60, "植萃纖酵宿 體驗包": 11, "肽纖飲 可可／奶茶風味": 60, "複方金盞花葉黃素EX飲": 65, "金盞花葉黃素高鈣晶亮凍": 36, "高機能益生菌": 70, "9國英雄TURBO極速錠": 36, "療肺草正冠茶": 60, "固樂纖": 90, "水光錠": 90, "水光繃帶面膜 精裝盒": 44, "雪聚露": 70, "婕肌零洗卸凝膠": 60, "婕肌零 體驗包": 2.3, "精純玻尿酸保濕原液": 60, "急救小白瓶": 70, "積雪草護手霜": 36, "法樂蓬洗髮露": 70, "法樂蓬洗髮露 體驗包": 2.0, "法樂蓬養髮原液": 65}, "v": {"纖纖飲X": 75, "纖飄錠": 75, "雪花紫纖飲": 54, "爆纖錠": 54, "爆纖錠 體驗包": null, "植萃纖酵宿": 54, "植萃纖酵宿 體驗包": null, "肽纖飲 可可／奶茶風味": 54, "複方金盞花葉黃素EX飲": 60, "金盞花葉黃素高鈣晶亮凍": 33, "高機能益生菌": 63, "9國英雄TURBO極速錠": 33, "療肺草正冠茶": 54, "固樂纖": 80, "水光錠": 80, "水光繃帶面膜 精裝盒": 39, "雪聚露": 63, "婕肌零洗卸凝膠": 54, "婕肌零 體驗包": null, "精純玻尿酸保濕原液": 54, "急救小白瓶": 63, "積雪草護手霜": 33, "法樂蓬洗髮露": 63, "法樂蓬洗髮露 體驗包": null, "法樂蓬養髮原液": 60}, "c": [{"纖纖飲X": 66, "纖飄錠": 66, "雪花紫纖飲": 48, "爆纖錠": 48, "爆纖錠 體驗包": 12, "植萃纖酵宿": 48, "植萃纖酵宿 體驗包": 9, "肽纖飲 可可／奶茶風味": 48, "複方金盞花葉黃素EX飲": 50, "金盞花葉黃素高鈣晶亮凍": 30, "高機能益生菌": 56, "9國英雄TURBO極速錠": 30, "療肺草正冠茶": 48, "固樂纖": 74, "水光錠": 74, "水光繃帶面膜 精裝盒": 35, "雪聚露": 56, "婕肌零洗卸凝膠": 48, "婕肌零 體驗包": 1.7, "精純玻尿酸保濕原液": 48, "急救小白瓶": 56, "積雪草護手霜": 30, "法樂蓬洗髮露": 56, "法樂蓬洗髮露 體驗包": 1.54, "法樂蓬養髮原液": 50}, {"纖纖飲X": 57, "纖飄錠": 57, "雪花紫纖飲": 41, "爆纖錠": 41, "爆纖錠 體驗包": 10.5, "植萃纖酵宿": 41, "植萃纖酵宿 體驗包": 7.5, "肽纖飲 可可／奶茶風味": 41, "複方金盞花葉黃素EX飲": 44, "金盞花葉黃素高鈣晶亮凍": 26, "高機能益生菌": 48, "9國英雄TURBO極速錠": 26, "療肺草正冠茶": 41, "固樂纖": 64, "水光錠": 64, "水光繃帶面膜 精裝盒": 31, "雪聚露": 48, "婕肌零洗卸凝膠": 41, "婕肌零 體驗包": 1.4, "精純玻尿酸保濕原液": 41, "急救小白瓶": 48, "積雪草護手霜": 26, "法樂蓬洗髮露": 48, "法樂蓬洗髮露 體驗包": 1.24, "法樂蓬養髮原液": 44}, {"纖纖飲X": 50, "纖飄錠": 50, "雪花紫纖飲": 35, "爆纖錠": 35, "爆纖錠 體驗包": 9, "植萃纖酵宿": 35, "植萃纖酵宿 體驗包": 6.5, "肽纖飲 可可／奶茶風味": 35, "複方金盞花葉黃素EX飲": 38, "金盞花葉黃素高鈣晶亮凍": 23, "高機能益生菌": 41, "9國英雄TURBO極速錠": 23, "療肺草正冠茶": 35, "固樂纖": 55, "水光錠": 55, "水光繃帶面膜 精裝盒": 27, "雪聚露": 41, "婕肌零洗卸凝膠": 35, "婕肌零 體驗包": 1.1, "精純玻尿酸保濕原液": 35, "急救小白瓶": 41, "積雪草護手霜": 23, "法樂蓬洗髮露": 41, "法樂蓬洗髮露 體驗包": 1.04, "法樂蓬養髮原液": 38}, {"纖纖飲X": 43, "纖飄錠": 43, "雪花紫纖飲": 30, "爆纖錠": 30, "爆纖錠 體驗包": 8, "植萃纖酵宿": 30, "植萃纖酵宿 體驗包": 5.5, "肽纖飲 可可／奶茶風味": 30, "複方金盞花葉黃素EX飲": 33, "金盞花葉黃素高鈣晶亮凍": 20, "高機能益生菌": 37, "9國英雄TURBO極速錠": 20, "療肺草正冠茶": 30, "固樂纖": 47, "水光錠": 47, "水光繃帶面膜 精裝盒": 24, "雪聚露": 37, "婕肌零洗卸凝膠": 30, "婕肌零 體驗包": 0.95, "精純玻尿酸保濕原液": 30, "急救小白瓶": 37, "積雪草護手霜": 20, "法樂蓬洗髮露": 37, "法樂蓬洗髮露 體驗包": 0.88, "法樂蓬養髮原液": 33}, {"纖纖飲X": 38, "纖飄錠": 38, "雪花紫纖飲": 25, "爆纖錠": 25, "爆纖錠 體驗包": 7, "植萃纖酵宿": 25, "植萃纖酵宿 體驗包": 4.5, "肽纖飲 可可／奶茶風味": 25, "複方金盞花葉黃素EX飲": 28, "金盞花葉黃素高鈣晶亮凍": 17, "高機能益生菌": 33, "9國英雄TURBO極速錠": 17, "療肺草正冠茶": 25, "固樂纖": 39, "水光錠": 39, "水光繃帶面膜 精裝盒": 22, "雪聚露": 33, "婕肌零洗卸凝膠": 25, "婕肌零 體驗包": 0.83, "精純玻尿酸保濕原液": 25, "急救小白瓶": 33, "積雪草護手霜": 17, "法樂蓬洗髮露": 33, "法樂蓬洗髮露 體驗包": 0.74, "法樂蓬養髮原液": 28}]}};
+const FX_LEVELS = [{name:"顧問［實習］"},{name:"市代［三級］"},{name:"官方［二級］"},{name:"合夥人［一級］"},{name:"聯創［皇家］"}];
+let CUR = "TWD";
+try { const c = localStorage.getItem("fairyCur"); if (c && FX[c]) CUR = c; } catch(e){}
+const isFX = () => CUR !== "TWD";
+const sym = () => isFX() ? FX[CUR].sym : "$";
+const money = n => sym() + fmt(n);
+const LV = () => isFX() ? FX_LEVELS : LEVELS;
+function P(p){
+  if (!isFX()) return p;
+  const f = FX[CUR];
+  return {r: f.r[p.n] ?? null, d: null, v: f.v[p.n] ?? null, t: p.t};
+}
+function hasFX(p){ return !isFX() || FX[CUR].r[p.n] != null; }
+function costOf(p){ return isFX() ? (FX[CUR].c[cur] ? FX[CUR].c[cur][p.n] ?? null : null) : p.c[cur]; }
 const aQty = {};
 let cur = 0;
 
@@ -575,7 +599,7 @@ PROMOS.forEach(pr => {
   pr.el = c;
   promosEl.appendChild(c);
 });
-function promoPicked(){ return PROMOS.filter(pr => (pQty[pr.id]||0) > 0).map(pr => ({pr, q:pQty[pr.id]})); }
+function promoPicked(){ if (isFX()) return []; return PROMOS.filter(pr => (pQty[pr.id]||0) > 0).map(pr => ({pr, q:pQty[pr.id]})); }
 
 function tierOf(){
   let qr = 0, mc = 0;
@@ -584,13 +608,24 @@ function tierOf(){
     g.list.forEach((p,pi) => {
       const q = aQty[gi + "-" + pi] || 0;
       if (!q || p.t) return;
-      qr += p.r * q; mc += q;
+      qr += P(p).r * q; mc += q;
     });
   });
+  if (isFX()){
+    const th = FX[CUR].vip;
+    if (qr >= th) return {k:"vip", lab:"VIP價", qr, mc, fx:1};
+    return {k:"retail", lab:"零售價", qr, mc, fx:1};
+  }
   if (promoPicked().length) return {k:"vip", lab:"VIP價", qr, mc, promo:1};
   if (qr >= 4000) return {k:"vip",  lab:"VIP價",     qr, mc};
   if (mc >= 2)    return {k:"deal", lab:"兩盒優惠價", qr, mc};
   return {k:"retail", lab:"單盒零售價", qr, mc};
+}
+function unitC(p, q, t){
+  const x = P(p);
+  if (!isFX()) return priceOf(p, t);
+  if (p.t || x.v == null) return x.r;
+  return (t.k === "vip" || q >= 3) ? x.v : x.r;
 }
 function priceOf(p, t){
   if (p.t) return p.r;
@@ -634,23 +669,26 @@ function renderC(){
       const [g,pi] = row.dataset.key.split("-").map(Number);
       const p = GROUPS[g].list[pi];
       const q = aQty[row.dataset.key] || 0;
-      const up = priceOf(p, T);
+      const up = unitC(p, q, T);
+      const X = P(p);
+      row.hidden = !hasFX(p);
       row.querySelector("output").textContent = q;
       row.querySelector('[data-s="-1"]').disabled = q === 0;
       row.classList.toggle("on", q > 0);
       const ps = row.querySelector("[data-price]");
-      if (ps) ps.innerHTML = p.t
-        ? '$' + fmt(p.r) + '　體驗包不打折'
-        : '$' + fmt(up) + (up < p.r ? ' <s>原價 $' + fmt(p.r) + '</s>' : '') +
+      if (ps && X.r != null) ps.innerHTML = (p.t || X.v == null)
+        ? money(X.r) + '　體驗包不打折'
+        : money(up) + (up < X.r ? ' <s>原價 ' + money(X.r) + '</s>' : '') +
           '<small class="ladder">' +
-            '<em class="' + (T.k==="retail"?"cur":"") + '">零售 $' + fmt(p.r) + '</em>' +
-            '<em class="' + (T.k==="deal"?"cur":"") + '">優惠 $' + fmt(p.d) + '</em>' +
-            '<em class="' + (T.k==="vip"?"cur":"") + '">VIP $' + fmt(p.v) + '</em>' +
-            (p.r > p.v ? '<em class="gap">VIP 省 $' + fmt(p.r - p.v) + '</em>' : '') +
+            '<em class="' + (up===X.r?"cur":"") + '">零售 ' + money(X.r) + '</em>' +
+            (X.d != null ? '<em class="' + (T.k==="deal"?"cur":"") + '">優惠 ' + money(X.d) + '</em>' : '') +
+            '<em class="' + (up===X.v && X.v!==X.r?"cur":"") + '">VIP ' + money(X.v) + '</em>' +
+            (X.r > X.v ? '<em class="gap">VIP 省 ' + money(X.r - X.v) + '</em>' : '') +
           '</small>';
+      if (X.r == null) return;
       n += q;
       pay  += q * up;
-      orig += q * p.r;
+      orig += q * X.r;
       count += q;
     });
     const c = d.querySelector("[data-cnt]");
@@ -670,7 +708,13 @@ function renderC(){
   const goods = pay;
   pay += (goods > 0 ? cShip : 0);
   const tb = document.getElementById("cTier");
-  if (T.promo){
+  if (T.fx){
+    const th = FX[CUR].vip;
+    tb.innerHTML = T.k === "vip"
+      ? '目前用 <b>VIP 價</b> 計算（混品零售已滿 ' + money(th) + '）。體驗包不打折，也不計入門檻。'
+      : '目前用 <b>零售價</b> 計算。混品零售滿 <b>' + money(th) + '</b>' + (T.qr ? '（還差 ' + money(th - T.qr) + '）' : '') +
+        '，或單品一次買 <b>3 盒</b>，就是 VIP 價。體驗包不打折，也不計入門檻。';
+  } else if (T.promo){
     tb.innerHTML = '已選 <b>十月限時活動組合</b>，加購其他商品一律用 <b>VIP 價</b> 計算。體驗包不打折。';
   } else if (T.k === "vip"){
     tb.innerHTML = '目前用 <b>VIP 價</b> 計算（主商品零售價已達 $4,000）。體驗包不打折，也不計入門檻。';
@@ -682,13 +726,13 @@ function renderC(){
   }
 
   const num = document.getElementById("cNum");
-  num.innerHTML = '<i>$</i>' + fmt(pay);
+  num.innerHTML = '<i>' + sym() + '</i>' + fmt(pay);
   num.disabled = pay === 0;
   document.getElementById("cLab").textContent = count > 0 ? "應付總金額 · 共 " + count + " 件" : "應付總金額";
   document.getElementById("cTap").textContent = pay > 0 ? "點金額複製" : "先選商品";
   document.getElementById("cSave").hidden = pay === 0;
-  document.getElementById("cOrig").textContent = "$" + fmt(orig);
-  document.getElementById("cDiff").textContent = "$" + fmt(orig - goods);
+  document.getElementById("cOrig").textContent = money(orig);
+  document.getElementById("cDiff").textContent = money(orig - goods);
   document.getElementById("cCopy").disabled = pay === 0;
   document.getElementById("cReset").disabled = pay === 0;
   const pv = document.getElementById("cPrev");
@@ -718,16 +762,20 @@ function upgradePlan(){
   const all = pick();
   const main = all.filter(x => !x.p.t).map(x => ({p:x.p, q:x.q, add:0}));
   if (!main.length) return null;
+  const th = isFX() ? FX[CUR].vip : 4000;
   let qr = T.qr, i = 0, guard = 0;
-  while (qr < 4000 && guard++ < 200){
+  const done = () => qr >= th || (isFX() && main.length === 1 && main[0].q >= 3);
+  while (!done() && guard++ < 200){
     const m = main[i % main.length];
-    m.q++; m.add++; qr += m.p.r; i++;
+    m.q++; m.add++; qr += P(m.p).r; i++;
   }
+  const allVip = qr >= th;
+  main.forEach(m => { m.unit = (allVip || (isFX() && m.q >= 3)) ? P(m.p).v : P(m.p).r; });
   const flat = all.filter(x => x.p.t);
   let goods = 0, orig = 0, addN = 0;
-  main.forEach(m => { goods += m.p.v * m.q; orig += m.p.r * m.q; addN += m.add; });
-  flat.forEach(x => { goods += x.p.r * x.q; orig += x.p.r * x.q; });
-  return {main, flat, goods, orig, addN, pay: goods + (goods > 0 ? cShip : 0)};
+  main.forEach(m => { goods += m.unit * m.q; orig += P(m.p).r * m.q; addN += m.add; });
+  flat.forEach(x => { goods += P(x.p).r * x.q; orig += P(x.p).r * x.q; });
+  return {main, flat, goods, orig, addN, pay: goods + (goods > 0 && !isFX() ? cShip : 0)};
 }
 
 function buildCMsg(pay, orig, goods){
@@ -743,7 +791,7 @@ function buildCMsg(pay, orig, goods){
     pp.forEach(({pr,q}) => {
       L.push("");
       L.push(pr.line);
-      L.push("× " + q + "組　$" + fmt(pr.vip * q));
+      L.push("× " + q + "組　" + money(pr.vip * q));
     });
   }
   const add = pick();
@@ -751,25 +799,25 @@ function buildCMsg(pay, orig, goods){
     L.push("");
     L.push(pp.length ? "✨加購商品（VIP價）" : "✨商品（" + T.lab + "）");
     add.forEach(({p,q}) => {
-      const unit = priceOf(p, T);
-      L.push("・" + p.n + " " + p.u + " × " + q + "　$" + fmt(unit * q) +
-             (unit < p.r ? "（原價 $" + fmt(p.r * q) + "）" : ""));
+      const unit = unitC(p, q, T), R0 = P(p).r;
+      L.push("・" + p.n + " " + p.u + " × " + q + "　" + money(unit * q) +
+             (unit < R0 ? "（原價 " + money(R0 * q) + "）" : ""));
     });
   }
   L.push("");
   L.push("－－－－－－－－");
-  L.push("🛍 商品原價共 $" + fmt(orig));
-  L.push("💰 總共省下 $" + fmt(orig - goods));
+  L.push("🛍 商品原價共 " + money(orig));
+  L.push("💰 總共省下 " + money(orig - goods));
   L.push("");
   if (cShip > 0){
-    L.push("🚚 運費 $" + fmt(cShip));
+    L.push("🚚 運費 " + money(cShip));
   }
-  L.push("💗 應付總金額 $" + fmt(pay));
+  L.push("💗 應付總金額 " + money(pay));
 
   L.push("超級划算的!!!!!");
   if (T.k === "vip" && !T.promo){
     L.push("");
-    L.push("✨ 滿 $4,000 算 VIP 價格給你唷");
+    L.push("✨ 滿 " + (isFX() ? money(FX[CUR].vip) : "$4,000") + " 算 VIP 價格給你唷");
   }
   if (T.k === "vip"){
     L.push("");
@@ -785,7 +833,10 @@ function buildC2Msg(){
   const T = tierOf();
   const nick = document.getElementById("nickname").value.trim() || "寶寶";
   const L = [nick + " 💕"];
-  if (T.k === "deal"){
+  if (isFX()){
+    L.push("混品零售滿 " + money(FX[CUR].vip) + "，或單品一次 3 盒");
+    L.push("就可以算你 VIP 價格唷");
+  } else if (T.k === "deal"){
     L.push("滿兩樣給你算優惠價格");
     L.push("你再滿 $4,000 可以算你 VIP 價格唷");
   } else {
@@ -795,17 +846,17 @@ function buildC2Msg(){
   L.push("");
   L.push("📣 升級 VIP 方案");
   up.main.forEach(m => {
-    L.push("・" + m.p.n + " × " + m.q + "盒　$" + fmt(m.p.v * m.q));
-    L.push("　等於一盒才 $" + fmt(m.p.v));
+    L.push("・" + m.p.n + " × " + m.q + "盒　" + money(m.unit * m.q));
+    L.push("　等於一盒才 " + money(m.unit));
   });
-  up.flat.forEach(x => L.push("・" + x.p.n + " " + x.p.u + " × " + x.q + "　$" + fmt(x.p.r * x.q)));
+  up.flat.forEach(x => L.push("・" + x.p.n + " " + x.p.u + " × " + x.q + "　" + money(P(x.p).r * x.q)));
   L.push("");
   L.push("－－－－－－－－");
-  L.push("🛍 商品原價共 $" + fmt(up.orig));
-  L.push("💰 總共省下 $" + fmt(up.orig - up.goods));
+  L.push("🛍 商品原價共 " + money(up.orig));
+  L.push("💰 總共省下 " + money(up.orig - up.goods));
   L.push("");
-  if (cShip > 0) L.push("🚚 運費 $" + fmt(cShip));
-  L.push("💗 應付總金額 $" + fmt(up.pay));
+  if (cShip > 0) L.push("🚚 運費 " + money(cShip));
+  L.push("💗 應付總金額 " + money(up.pay));
   L.push("");
   L.push("有這兩個方案 寶寶可以選一下 💕");
   return L.join("\n");
@@ -828,14 +879,18 @@ const dEl = document.getElementById("orderDate");
 dEl.value = new Date().toLocaleDateString("sv-SE");
 
 const levelsEl = document.getElementById("levels");
-LEVELS.forEach((lv,i) => {
-  const b = document.createElement("button");
-  b.className = "level";
-  b.textContent = lv.name;
-  b.setAttribute("aria-pressed", i === 0);
-  b.onclick = () => { cur = i; renderT(); };
-  levelsEl.appendChild(b);
-});
+function buildLevels(){
+  levelsEl.innerHTML = "";
+  LV().forEach((lv,i) => {
+    const b = document.createElement("button");
+    b.className = "level";
+    b.textContent = lv.name;
+    b.setAttribute("aria-pressed", i === cur);
+    b.onclick = () => { cur = i; renderT(); };
+    levelsEl.appendChild(b);
+  });
+}
+buildLevels();
 
 const ordEl = document.getElementById("orderAddons");
 GROUPS.forEach((g,gi) => {
@@ -865,12 +920,13 @@ function ordered(){
   const out = [];
   GROUPS.forEach((g,gi) => g.list.forEach((p,pi) => {
     const q = oQty[gi + "-" + pi] || 0;
-    if (q > 0 && p.c[cur] != null) out.push({p, q});
+    if (q > 0 && costOf(p) != null) out.push({p, q});
   }));
   return out;
 }
 
 function renderT(){
+  if (levelsEl.children.length !== LV().length) buildLevels();
   [...levelsEl.children].forEach((b,i) => b.setAttribute("aria-pressed", i === cur));
 
   let count = 0, sSum = 0, sEarn = 0;
@@ -879,20 +935,23 @@ function renderT(){
     d.querySelectorAll(".prod").forEach(row => {
       const [g,pi] = row.dataset.key.split("-").map(Number);
       const p = GROUPS[g].list[pi];
-      const cost = p.c[cur];
+      const cost = costOf(p);
+      const RR = P(p).r;
       let q = oQty[row.dataset.key] || 0;
       if (cost == null){ q = 0; oQty[row.dataset.key] = 0; }
+      row.hidden = isFX() && cost == null;
       row.querySelector("output").textContent = q;
       row.querySelector("[data-cost]").textContent =
         cost == null ? "此級別成本未提供"
-                     : "成本 $" + fmt(cost) + (p.r ? "　零售 $" + fmt(p.r) + "　賺 $" + fmt(p.r - cost) : "") +
-                       (q > 0 ? "　小計 $" + fmt(cost*q) : "");
+                     : "成本 " + money(cost) + (RR ? "　零售 " + money(RR) + "　賺 " + money(RR - cost) : "") +
+                       (q > 0 ? "　小計 " + money(cost*q) : "");
       row.querySelector('[data-s="-1"]').disabled = q === 0;
       row.querySelector('[data-s="1"]').disabled  = cost == null;
       row.classList.toggle("on", q > 0);
       n += q;
-      if (cost != null){ sSum += cost*q; if (p.r) sEarn += (p.r - cost)*q; count += q; }
+      if (cost != null){ sSum += cost*q; if (RR) sEarn += (RR - cost)*q; count += q; }
     });
+    d.hidden = ![...d.querySelectorAll(".prod")].some(r => !r.hidden);
     const c = d.querySelector("[data-cnt]");
     c.textContent = n;
     c.hidden = n === 0;
@@ -902,13 +961,13 @@ function renderT(){
   const goods = sSum;
   const t = goods + (goods > 0 ? tShip : 0);
   const num = document.getElementById("tNum");
-  num.innerHTML = '<i>$</i>' + fmt(t);
+  num.innerHTML = '<i>' + sym() + '</i>' + fmt(t);
   num.disabled = t === 0;
   document.getElementById("tLab").textContent = count ? "應付總金額 · 共 " + count + " 件" : "應付總金額";
   document.getElementById("tTap").textContent = t ? "點金額複製" : "先選數量";
   document.getElementById("tSave").hidden = t === 0;
-  document.getElementById("tSsum").textContent = "$" + fmt(sSum);
-  document.getElementById("tEsum").textContent = "$" + fmt(sEarn);
+  document.getElementById("tSsum").textContent = "" + money(sSum);
+  document.getElementById("tEsum").textContent = "" + money(sEarn);
   document.getElementById("tCopy").disabled = t === 0;
   document.getElementById("tReset").disabled = t === 0;
   return {t, goods, sSum, earn: sEarn};
@@ -931,7 +990,8 @@ document.getElementById("tCopy").onclick = () => {
   const L = ["📦 叫貨單"];
   if (who) L.push("叫貨人：" + who);
   if (day) L.push("日期：" + day);
-  L.push("級別：" + LEVELS[cur].name);
+  L.push("級別：" + LV()[cur].name);
+  if (isFX()) L.push("幣別：" + FX[CUR].name);
 
   const items = ordered();
   if (items.length){
@@ -940,21 +1000,21 @@ document.getElementById("tCopy").onclick = () => {
     items.forEach(({p,q}) => {
       if (p.h){
         L.push(p.h);
-        L.push(p.k + " × " + q + "組　$" + fmt(p.c[cur] * q));
+        L.push(p.k + " × " + q + "組　" + money(costOf(p) * q));
         L.push("");
       } else {
-        L.push(p.n + " " + p.u + " × " + q + "　$" + fmt(p.c[cur] * q));
+        L.push(p.n + " " + p.u + " × " + q + "　" + money(costOf(p) * q));
       }
     });
   }
   if (L[L.length-1] !== "") L.push("");
   L.push("－－－－－－－－");
   if (tShip > 0){
-    L.push("商品合計 $" + fmt(goods));
-    L.push("運費 $" + fmt(tShip));
+    L.push("商品合計 " + money(goods));
+    L.push("運費 " + money(tShip));
   }
-  L.push("應付總金額 $" + fmt(t));
-  if (earn > 0) L.push("（預估可賺 $" + fmt(earn) + "）");
+  L.push("應付總金額 " + money(t));
+  if (earn > 0) L.push("（預估可賺 " + money(earn) + "）");
   copy(L.join("\n"), "叫貨單已複製");
 };
 
@@ -1968,6 +2028,34 @@ function toast(msg){
 renderC();
 renderT();
 renderJ();
+
+/* ---- 幣別切換 ---- */
+const CUR_LIST = [["TWD","🇹🇼 台幣"],["MOP","🇲🇴 澳門"],["HKD","🇭🇰 香港"],["SGD","🇸🇬 新加坡"],["MYR","🇲🇾 馬來西亞"],["USD","🇺🇸 美金"],["AUD","🇦🇺 澳幣"]];
+function paintCur(){
+  document.querySelectorAll("[data-curs]").forEach(box => {
+    if (!box.children.length){
+      CUR_LIST.forEach(([k,lab]) => {
+        const b = document.createElement("button");
+        b.type = "button"; b.dataset.c = k; b.textContent = lab;
+        b.onclick = () => setCur(k);
+        box.appendChild(b);
+      });
+    }
+    [...box.children].forEach(b => b.setAttribute("aria-pressed", b.dataset.c === CUR));
+  });
+  document.querySelectorAll("[data-twonly]").forEach(el => el.hidden = isFX());
+}
+function setCur(k){
+  if (k === CUR) return;
+  CUR = k;
+  try { localStorage.setItem("fairyCur", k); } catch(e){}
+  cur = 0; cShip = 0; tShip = 0;
+  if (isFX()) Object.keys(pQty).forEach(x => pQty[x] = 0);
+  Object.keys(aQty).forEach(x => { const [g,pi] = x.split("-").map(Number); if (!hasFX(GROUPS[g].list[pi])) aQty[x] = 0; });
+  buildLevels();
+  paintCur(); renderC(); renderT();
+}
+paintCur(); renderC(); renderT();
 
 /* ---- 浮動金額小視窗 ---- */
 (function(){
