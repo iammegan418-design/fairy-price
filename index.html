@@ -182,6 +182,20 @@ details[open] summary .arw{transform:rotate(90deg)}
 .preview{margin:12px 16px 0;padding:14px 16px;border-radius:14px;background:#fff;border:1px dashed var(--hairline)}
 .preview{border:1.5px solid var(--line)!important;background:var(--paper)!important;margin-top:16px!important}
 .preview .pl{font-weight:800!important;color:var(--plum)!important;letter-spacing:.06em!important;font-size:13px!important}
+.perk{margin:12px 16px 0;padding:14px 16px;border-radius:14px;background:var(--rose-soft);border:1.5px solid var(--line)}
+.perk-h{font-weight:800;font-size:14px;color:var(--plum)}
+.perk-r{margin-top:4px;font-size:13.5px;line-height:1.7}.perk-r small{display:block;color:var(--muted)}
+.classes{margin-top:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:0 12px}
+.classes summary{list-style:none;cursor:pointer;padding:11px 0;font-weight:700;font-size:13.5px;color:var(--plum)}
+.classes summary::-webkit-details-marker{display:none}
+.classes pre{white-space:pre-wrap;font-family:inherit;font-size:13px;line-height:1.75;margin:0 0 4px;color:var(--ink)}
+.classes[open]{padding-bottom:12px}
+.perk-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.perk-btns button{display:flex;align-items:center;gap:6px;font-family:inherit;font-size:13px;font-weight:700;color:var(--plum);
+  background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px 10px 6px 6px;cursor:pointer}
+.perk-btns button img{width:28px;height:28px;border-radius:7px;object-fit:contain}
+.perk-btns button span.q[hidden]{display:none}
+.perk-btns button span.q{min-width:18px;height:18px;border-radius:9px;background:var(--plum);color:#fff;font-size:11px;display:grid;place-items:center;padding:0 5px}
 .preview.p2{border-style:solid;border-color:var(--rose-soft);background:#FFFBF9}
 .preview .pl{font-size:12px;letter-spacing:.12em;color:var(--muted);margin-bottom:8px}
 .preview pre{margin:0;white-space:pre-wrap;word-break:break-word;font-family:inherit;font-size:13.5px;line-height:1.75;color:var(--ink)}
@@ -338,6 +352,11 @@ footer{padding-bottom:84px}
     <button class="act main" id="cCopyIn" style="width:100%;margin-top:12px">複製方案</button>
     <button class="act" id="cCopyB" data-fxonly hidden style="width:100%;margin-top:12px">複製版本二（實付金額後面不加 💗）</button>
   </div>
+  <div class="preview p2" id="cPrevG" hidden>
+    <div class="pl">🎁 贈送課程（想傳再複製）</div>
+    <pre id="cPrevGT"></pre>
+    <button class="act main" id="cCopyG" style="width:100%;margin-top:12px">複製贈送課程</button>
+  </div>
   <div class="preview p2" id="cPrevF" hidden>
     <div class="pl">💬 追問一句（想傳再複製）</div>
     <pre id="cPrevFT">寶如果吃得不錯
@@ -366,7 +385,56 @@ footer{padding-bottom:84px}
   </div>
 
   <div data-twonly><div class="sect">🌕 十一月限時活動 <span>· 買3送1 限時組合</span></div>
-  <div id="promos"></div></div>
+  <div id="promos"></div>
+  <div class="perk">
+    <div class="perk-h">🎁 買越多送越多</div>
+    <div class="perk-r"><b>2 組</b>送 陪伴班（營養師專班）<br>　<b>3 組</b>送 陪跑班<small>（可奶、紫纖飲可以合併算組數）</small></div>
+    <details class="classes">
+      <summary>📖 陪伴班 vs 陪跑班 差異（點開看・可複製給客人）</summary>
+      <pre id="classT">🏃‍♀️【客製化纖體陪跑班】（VIP價 NT$6,600）
+
+🎁 達標有禮！瘦到就送你纖體產品一盒
+👉 體重 -2.5 公斤 + 體脂 -1.2% 同時達標即可獲得（無名額上限）
+
+班級特色
+★飲食打卡＋身體數據紀錄
+★專屬營養師團隊即時QA回覆
+★5堂進階課程（平日晚間）
+★一對一客製化飲食點評建議
+★專屬小幫手＋CBT飲食引導法
+★8位國考營養師全程陪跑
+★科學方式調理內分泌，打造易瘦體態
+
+✨適合：想有明顯體態改變、需要專業營養師帶著做的寶！
+
+
+VS .
+
+
+🌱【纖體陪伴班】（VIP價 NT$3,840）
+
+🩵 入門班，輕鬆學會正確吃瘦法！
+（此班為基礎陪伴課程，無達標贈禮）
+
+班級特色：
+★提供飲食範例與清楚指導
+★5堂輕鬆懂課（白天時段）
+★免打卡、低門檻、輕鬆跟上
+★每日固定QA回覆
+
+✨適合：剛開始接觸、想建立正確飲食習慣的寶！
+
+
+❓ 纖體班 VS 陪伴班 差異？
+
+👉 陪伴班＝「輕鬆入門，學會正確吃瘦」
+
+🎯 陪跑班＝「有目標、有紀錄、瘦到還有禮」</pre>
+      <button class="act main" type="button" id="classCopy" style="width:100%;margin-top:10px">複製班級介紹</button>
+    </details>
+    <div class="perk-h" style="margin-top:10px">➕ 一組就可以加購（用 VIP 價）</div>
+    <div class="perk-btns" id="perkBtns"></div>
+  </div></div>
 
   <div class="sect">選商品 <span>· 自動套用優惠／VIP 價</span></div>
   <div class="tierbar" id="cTier"></div>
@@ -658,6 +726,21 @@ PROMOS.forEach(pr => {
   pr.el = c;
   promosEl.appendChild(c);
 });
+const PERK_ITEMS = ["纖纖飲X","纖飄錠","爆纖錠","植萃纖酵宿"];
+function perkKey(n){ for (const [gi,g] of GROUPS.entries()){ if (g.team) continue; const pi = g.list.findIndex(x => x.n === n); if (pi >= 0) return gi + "-" + pi; } return null; }
+function paintPerk(){
+  const box = document.getElementById("perkBtns"); if (!box) return;
+  if (!box.children.length){
+    PERK_ITEMS.forEach(n => {
+      const k = perkKey(n); if (!k) return;
+      const b = document.createElement("button"); b.type = "button"; b.dataset.k = k;
+      b.innerHTML = thumb(n).replace('class="pimg','class="pimg x') + "<span>" + ({"植萃纖酵宿":"纖酵宿"}[n] || n) + "</span><span class=\"q\" hidden></span>";
+      b.onclick = () => { aQty[k] = Math.min(99, (aQty[k]||0) + 1); renderC(); };
+      box.appendChild(b);
+    });
+  }
+  [...box.children].forEach(b => { const q = aQty[b.dataset.k] || 0, el = b.querySelector(".q"); el.hidden = !q; el.textContent = q; });
+}
 function promoPicked(){ if (isFX()) return []; return PROMOS.filter(pr => (pQty[pr.id]||0) > 0).map(pr => ({pr, q:pQty[pr.id]})); }
 
 function tierOf(){
@@ -774,7 +857,9 @@ function renderC(){
       : '目前用 <b>零售價</b> 計算。混品零售滿 <b>' + money(th) + '</b>' + (T.qr ? '（還差 ' + money(th - T.qr) + '）' : '') +
         '，或單品一次買 <b>3 盒</b>，就是 VIP 價。體驗包不打折，也不計入門檻。';
   } else if (T.promo){
-    tb.innerHTML = '已選 <b>十一月限時活動組合</b>，加購其他商品一律用 <b>VIP 價</b> 計算。體驗包不打折。';
+    const sets = promoPicked().reduce((a,x) => a + x.q, 0);
+    tb.innerHTML = '已選 <b>十一月限時活動 ' + sets + ' 組</b>' + (sets >= 3 ? '，送 <b>陪跑班</b> 🎁' : sets === 2 ? '，送 <b>陪伴班（營養師專班）</b> 🎁（再 1 組送陪跑班）' : '（再 1 組送陪伴班）') +
+      '。加購其他商品一律用 <b>VIP 價</b> 計算，體驗包不打折。';
   } else if (T.k === "vip"){
     tb.innerHTML = '目前用 <b>VIP 價</b> 計算（主商品零售價已達 $4,000）。體驗包不打折，也不計入門檻。';
   } else if (T.k === "deal"){
@@ -801,6 +886,10 @@ function renderC(){
   document.getElementById("cPrev2").hidden = !t2;
   document.getElementById("cPrev2T").textContent = t2;
   document.getElementById("cPrevF").hidden = !pay || isFX();
+  const gt = buildGiftMsg();
+  document.getElementById("cPrevG").hidden = !gt;
+  document.getElementById("cPrevGT").textContent = gt;
+  if (typeof paintPerk === "function") paintPerk();
   const t3 = (pay && typeof buildJoinMsg === "function") ? buildJoinMsg(goods) : "";
   document.getElementById("cPrev3").hidden = !t3;
   document.getElementById("cPrev3T").textContent = t3;
@@ -910,7 +999,7 @@ function buildCMsg(pay, orig, goods, noHeart){
   const add = pick();
   if (add.length){
     L.push("");
-    L.push(pp.length ? "✨加購商品（VIP價）" : "✨商品（" + T.lab + "）");
+    L.push(pp.length ? "➕加購商品（VIP價）" : "✨商品（" + T.lab + "）");
     add.forEach(({p,q}) => {
       const unit = unitC(p, q, T), R0 = P(p).r;
       L.push("・" + p.n + " " + p.u + " × " + q + "　" + money(unit * q) +
@@ -1038,6 +1127,31 @@ function buildJoinMsg(goods){
   }
   return L.join("\n");
 }
+function buildGiftMsg(){
+  if (isFX()) return "";
+  const sets = promoPicked().reduce((a,x) => a + x.q, 0);
+  if (!sets) return "";
+  const BAN = ["🌱 陪伴班（營養師專班）＝輕鬆入門，學會正確吃瘦",
+               "・5堂輕鬆懂課（白天時段）",
+               "・提供飲食範例＋每日固定QA",
+               "・免打卡、低門檻，輕鬆跟上"];
+  const RUN = ["🏃‍♀️ 陪跑班＝有目標、有紀錄、瘦到還有禮",
+               "・8位國考營養師全程陪跑",
+               "・飲食打卡＋一對一客製化飲食點評",
+               "・5堂進階課程（平日晚間）",
+               "・體重 -2.5kg＋體脂 -1.2% 達標，再送纖體產品一盒"];
+  const L = [];
+  if (sets >= 3){
+    L.push("🎁 三組贈：陪跑班", "", ...RUN);
+  } else if (sets === 2){
+    L.push("🎁 兩組贈：陪伴班（營養師專班）", "", ...BAN, "", "💡 再加 1 組，就升級送陪跑班 👇", ...RUN);
+  } else {
+    L.push("💡 再加 1 組（共 2 組）就送陪伴班（營養師專班）", "", ...BAN, "", "買 3 組還能升級送陪跑班 👇", ...RUN);
+  }
+  return L.join("\n");
+}
+document.getElementById("cCopyG").onclick = () => { const t = buildGiftMsg(); if (t) copy(t, "贈送課程已複製"); };
+document.getElementById("classCopy").onclick = () => copy(document.getElementById("classT").textContent, "班級介紹已複製");
 document.getElementById("cCopyF").onclick = () => copy(document.getElementById("cPrevFT").textContent, "追問已複製");
 document.getElementById("cCopyIn").onclick = () => document.getElementById("cCopy").click();
 document.getElementById("cCopy3").onclick = () => {
