@@ -180,6 +180,8 @@ details[open] summary .arw{transform:rotate(90deg)}
   border:1px solid var(--hairline);background:#fff;color:var(--plum)}
 .curs button[aria-pressed="true"]{background:var(--grad);color:var(--onp);border-color:transparent}
 .preview{margin:12px 16px 0;padding:14px 16px;border-radius:14px;background:#fff;border:1px dashed var(--hairline)}
+.preview{border:1.5px solid var(--line)!important;background:var(--paper)!important;margin-top:16px!important}
+.preview .pl{font-weight:800!important;color:var(--plum)!important;letter-spacing:.06em!important;font-size:13px!important}
 .preview.p2{border-style:solid;border-color:var(--rose-soft);background:#FFFBF9}
 .preview .pl{font-size:12px;letter-spacing:.12em;color:var(--muted);margin-bottom:8px}
 .preview pre{margin:0;white-space:pre-wrap;word-break:break-word;font-family:inherit;font-size:13.5px;line-height:1.75;color:var(--ink)}
@@ -331,19 +333,27 @@ footer{padding-bottom:84px}
     <button class="act" id="cReset" disabled>清空</button>
   </div>
   <div class="preview" id="cPrev" hidden>
-    <div class="pl">📋 會複製給客人的文字</div>
+    <div class="pl">📋 方案（複製給客人）</div>
     <pre id="cPrevT"></pre>
+    <button class="act main" id="cCopyIn" style="width:100%;margin-top:12px">複製方案</button>
     <button class="act" id="cCopyB" data-fxonly hidden style="width:100%;margin-top:12px">複製版本二（實付金額後面不加 💗）</button>
   </div>
+  <div class="preview p2" id="cPrevF" hidden>
+    <div class="pl">💬 追問一句（想傳再複製）</div>
+    <pre id="cPrevFT">寶如果吃得不錯
+想要更優惠的會員VIP
+更低的實習價格我也可以算給你看唷</pre>
+    <button class="act main" id="cCopyF" style="width:100%;margin-top:12px">複製追問</button>
+  </div>
   <div class="preview p2" id="cPrev2" hidden>
-    <div class="pl">💎 方案二：升級 VIP（想傳再複製）</div>
+    <div class="pl">💎 升級 VIP 方案（想傳再複製）</div>
     <pre id="cPrev2T"></pre>
-    <button class="act main" id="cCopy2" style="width:100%;margin-top:12px">複製方案二給客人</button>
+    <button class="act main" id="cCopy2" style="width:100%;margin-top:12px">複製升級方案</button>
   </div>
   <div class="preview p2 pj" id="cPrev3" hidden>
-    <div class="pl">👑 實習加盟試算（讓客人心動，想傳再複製）</div>
+    <div class="pl">👑 實習加盟試算（想傳再複製）</div>
     <pre id="cPrev3T"></pre>
-    <button class="act main" id="cCopy3" style="width:100%;margin-top:12px">複製加盟試算給客人</button>
+    <button class="act main" id="cCopy3" style="width:100%;margin-top:12px">複製加盟試算</button>
   </div>
 <div class="sect">幣別 <span>· 海外客人選當地幣別</span></div>
   <div class="curs" data-curs></div>
@@ -790,6 +800,7 @@ function renderC(){
   const t2 = (pay && typeof buildC2Msg === "function") ? buildC2Msg() : "";
   document.getElementById("cPrev2").hidden = !t2;
   document.getElementById("cPrev2T").textContent = t2;
+  document.getElementById("cPrevF").hidden = !pay || isFX();
   const t3 = (pay && typeof buildJoinMsg === "function") ? buildJoinMsg(goods) : "";
   document.getElementById("cPrev3").hidden = !t3;
   document.getElementById("cPrev3T").textContent = t3;
@@ -921,12 +932,6 @@ function buildCMsg(pay, orig, goods, noHeart){
     L.push("");
     L.push("✨ 滿 " + (isFX() ? money(FX[CUR].vip) : "$4,000") + " 算 VIP 價格給你唷");
   }
-  if (T.k === "vip"){
-    L.push("");
-    L.push("寶如果吃得不錯");
-    L.push("想要更優惠的會員VIP");
-    L.push("更低的實習價格我也可以算給你看唷");
-  }
   return L.join("\n");
 }
 function buildC2Msg(){
@@ -1011,11 +1016,30 @@ function buildJoinMsg(goods){
       L.push("　朋友跟你買一盒，你就賺 $" + fmt(p.r - p.c[0]));
     });
   }
-  L.push("");
-  L.push("平常自己吃就是實習價，分享給朋友還能賺回來 💗");
-  L.push("想了解的話，我 1 對 1 算給你看唷 ✨");
+  // 同樣這些，用加盟價要多少
+  const teamCombo = n => { for (const g of GROUPS){ if (!g.team) continue; const p = g.list.find(x => x.h === n); if (p) return p; } return null; };
+  const tot = [0, 0]; let ok = true, sets = 0, onlyPromo = true;
+  promoPicked().forEach(({pr,q}) => {
+    const key = pr.id === "p1" ? "可可" : "紫纖飲";
+    const tc = teamCombo(key);
+    if (!tc) { ok = false; return; }
+    tot[0] += tc.c[0] * q; tot[1] += tc.c[1] * q; sets += q;
+  });
+  pick().forEach(({p,q}) => {
+    onlyPromo = false;
+    if (!p.c || p.c[0] == null || p.c[1] == null) { ok = false; return; }
+    tot[0] += p.c[0] * q; tot[1] += p.c[1] * q;
+  });
+  if (ok && tot[0] > 0){
+    L.push("");
+    L.push((onlyPromo && sets ? "同樣 " + sets + " 組" : "同樣買這些") + "，加盟後只要👇");
+    L.push("・實習價 $" + fmt(tot[0]) + (goods > tot[0] ? "（省 $" + fmt(goods - tot[0]) + "）" : ""));
+    if (goods >= 19800) L.push("・三級價 $" + fmt(tot[1]) + (goods > tot[1] ? "（省 $" + fmt(goods - tot[1]) + "）" : ""));
+  }
   return L.join("\n");
 }
+document.getElementById("cCopyF").onclick = () => copy(document.getElementById("cPrevFT").textContent, "追問已複製");
+document.getElementById("cCopyIn").onclick = () => document.getElementById("cCopy").click();
 document.getElementById("cCopy3").onclick = () => {
   const {goods} = renderC();
   const t = buildJoinMsg(goods);
